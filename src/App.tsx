@@ -54,7 +54,7 @@ export default function App() {
     <Box>
       <Box
         style={{
-          backgroundPositionY: -70,
+          backgroundPositionY: isLargeScreen ? -70 : 0,
           backgroundImage: "url(background-pc.svg)",
           backgroundSize: "cover",
         }}
@@ -207,7 +207,7 @@ export default function App() {
               </Box>
             </Box>
           </Grid>
-          <Grid item lg={4} sm={6} textAlign='left'>
+          <Grid item lg={4} textAlign='left' px={5}>
             <Typography variant='h5' sx={{ mb: 2 }}>
               Token Info
             </Typography>
