@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useTheme } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -44,19 +44,26 @@ export default function App() {
   const changeToken = (event: SelectChangeEvent<string>): void => {
     setToken(event.target.value);
   };
-  const [amount, setAmount] = useState(0.1);
+  const [amount, setAmount] = useState("0.1");
   const changeAmount = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ): void => {
-    setAmount(Number(event.target.value));
+    setAmount(event.target.value);
+  };
+
+  const submitHandler = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    console.log(token);
+    console.log(amount);
   };
   return (
     <Box>
       <Box
         style={{
-          backgroundPositionY: isLargeScreen ? -70 : 0,
+          backgroundPositionY: isLargeScreen ? -40 : 0,
           backgroundImage: "url(background-pc.svg)",
           backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
         }}
       >
         <AppBar />
@@ -73,7 +80,7 @@ export default function App() {
           }}
           flexDirection='column'
         >
-          <Grid item>
+          <Grid item xs={12}>
             <Grid
               container
               direction='column'
@@ -83,7 +90,7 @@ export default function App() {
               mb={2}
             >
               <Grid item>
-                <Typography variant={isLargeScreen ? "h4" : "h5"}>
+                <Typography variant={isLargeScreen ? "h4" : "h6"}>
                   <b>Alps Token Presale Live</b>
                 </Typography>
               </Grid>
@@ -112,7 +119,7 @@ export default function App() {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item lg={5} px={5} mt={2} mb={2}>
+          <Grid item lg={5} px={isLargeScreen ? 5 : 0} mt={2} mb={2}>
             <Typography variant='h5' sx={{ mb: 2 }}>
               Presale Round 1
             </Typography>
@@ -130,7 +137,7 @@ export default function App() {
               <Typography fontWeight={600} sx={{ ml: 0.5, mb: 1 }}>
                 Price: 1 Alps = $0.075
               </Typography>
-              <Box component='form' noValidate autoComplete='off'>
+              <Box component='form' autoComplete='off' onSubmit={submitHandler}>
                 <Box
                   sx={{
                     display: "flex",
@@ -147,6 +154,7 @@ export default function App() {
                     onChange={changeAmount}
                     InputProps={{
                       disableUnderline: true,
+                      inputMode: "decimal",
                     }}
                     sx={{
                       pl: 1,
@@ -196,35 +204,33 @@ export default function App() {
                     textTransform: "none",
                     color: "black",
                   }}
-                  onClick={() => {
-                    const AlpsFinanceAppURL = "https://app.alps.finance";
-                    window.open(AlpsFinanceAppURL, "_blank") ||
-                      window.location.replace(AlpsFinanceAppURL);
-                  }}
+                  type='submit'
                 >
                   Buy
                 </Button>
               </Box>
             </Box>
           </Grid>
-          <Grid item lg={4} textAlign='left' px={5}>
+          <Grid item lg={4} textAlign='left' px={isLargeScreen ? 5 : 0}>
             <Typography variant='h5' sx={{ mb: 2 }}>
               Token Info
             </Typography>
             <Grid container direction='row' alignItems='center' spacing={1}>
-              <Grid item lg={4}>
+              <Grid item lg={6} sm={7}>
                 <Typography sx={{ display: "inline" }}>Symbol: </Typography>
                 <Typography fontWeight={600} sx={{ display: "inline" }}>
                   ALPS
                 </Typography>
               </Grid>
-              <Grid item lg={4}>
+              <Grid item lg={4} sm={5}>
                 <Typography sx={{ display: "inline" }}>Decimal:</Typography>
                 <Typography fontWeight={600} sx={{ display: "inline" }}>
                   18
                 </Typography>
               </Grid>
-              <Grid item>
+            </Grid>
+            <Grid container direction='row' alignItems='center' spacing={1}>
+              <Grid item lg={12}>
                 <Typography sx={{ display: "inline" }}>Contract: </Typography>
                 <Typography fontWeight={600} sx={{ display: "inline", mr: 1 }}>
                   0x02c8***099dg28

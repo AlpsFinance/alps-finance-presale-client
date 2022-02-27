@@ -136,9 +136,10 @@ const CustomAppBar: FC = () => {
           variant='contained'
           sx={{
             borderRadius: 30,
-            color: "#0D7E06",
-            backgroundColor: "white",
-            py: 1,
+            color: "white",
+            background:
+              "linear-gradient(274.61deg, #0D7E06 18.06%, #00BB89 125.98%)",
+            ml: 1,
             fontWeight: "bold",
             "@media (max-width: 780px)": {
               display: "none",
@@ -150,7 +151,7 @@ const CustomAppBar: FC = () => {
               window.location.replace(AlpsFinanceAppURL);
           }}
         >
-          Connect Wallet
+          Launch App
         </Button>
         <Grid
           container

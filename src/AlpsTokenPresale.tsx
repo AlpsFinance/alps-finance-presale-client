@@ -23,7 +23,7 @@ const AlpsTokenPresale: FC<Props> = (props) => {
       container
       justifyContent='center'
       alignItems='start'
-      sx={{ ml: isLargeScreen ? 1 : 0 }}
+      // sx={{ ml: isLargeScreen ? 1 : 0 }}
     >
       <Box
         sx={{
@@ -43,8 +43,8 @@ const AlpsTokenPresale: FC<Props> = (props) => {
             TOKEN PRESALE STARTS IN:
           </Grid>
 
-          <Grid container spacing={2}>
-            <Grid item md={6} xs={6} container>
+          <Grid container spacing={isLargeScreen ? 2 : 0}>
+            <Grid item>
               <Box
                 sx={{
                   display: "flex",
