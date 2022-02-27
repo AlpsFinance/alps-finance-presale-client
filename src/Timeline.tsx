@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -7,18 +7,8 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { Box, Button } from "@mui/material";
-
-const BorderLinearProgress = styled(LinearProgress)(() => ({
-  height: 10,
-  borderRadius: 5,
-  [`&.${linearProgressClasses.colorPrimary}`]: {
-    backgroundColor: "#C7BFED",
-  },
-  [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
-    backgroundColor: "#0D7E06",
-  },
-}));
+import { preSaleAbi } from "./utility/presaleabi";
+import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
 
 function LinearProgressWithLabel(
   props: LinearProgressProps & { value: number }
@@ -52,7 +42,28 @@ function LinearProgressWithLabel(
 }
 
 const Timeline: FC = () => {
-  const [progress, setProgress] = useState(10);
+  const { isWeb3Enabled } = useMoralis();
+  const { fetch } = useWeb3ExecuteFunction();
+  const [progress, setProgress] = useState(-1);
+
+  useEffect(() => {
+    if (isWeb3Enabled && progress === -1) {
+      fetch({
+        params: {
+          abi: preSaleAbi,
+          functionName: "totalSupply",
+          contractAddress: "0x064c13231656A8c10CE6df9e8CC91E9D8CbCce31",
+        },
+        onError: (e: any) => {
+          console.log(e);
+        },
+        onSuccess: (result: any) => {
+          setProgress(result);
+        },
+      });
+    }
+  }, [isWeb3Enabled]);
+
   return (
     <Grid
       container
@@ -78,19 +89,19 @@ const Timeline: FC = () => {
           PRESALE A (18 Feb 2022 - 17 Mar 2022)
         </Typography>
         <Typography>Amount: 50,000,000</Typography>
-        <Typography>Unit: $0.075</Typography>
+        <Typography>Unit: $0.000125</Typography>
         <LinearProgressWithLabel value={progress} />
         <Typography fontWeight={600}>
           PRESALE B (18 Mar 2022 - 17 Apr 2022)
         </Typography>
         <Typography>Amount: 100,000,000</Typography>
-        <Typography>Unit: $0.05</Typography>
+        <Typography>Unit: $0.000250</Typography>
         <LinearProgressWithLabel value={progress} />
         <Typography fontWeight={600}>
           PRESALE C (18 Apr 2022 - 17 May 2022)
         </Typography>
         <Typography>Amount: 100,000,000</Typography>
-        <Typography>Unit: $0.05</Typography>
+        <Typography>Unit: $0.00050</Typography>
         <LinearProgressWithLabel value={progress} />
         <Box textAlign='center'>
           <Button
@@ -103,11 +114,9 @@ const Timeline: FC = () => {
                 "linear-gradient(274.61deg, #0D7E06 18.06%, #00BB89 125.98%)",
               py: 1,
               fontWeight: "bold",
-              mb: 4
+              mb: 4,
             }}
-            onClick={() => {
-              
-            }}
+            onClick={() => {}}
           >
             Read Litepaper
           </Button>

@@ -159,7 +159,7 @@ const BuyContainer: FC<props> = (props: props) => {
         }}
       >
         <Typography fontWeight={600} sx={{ ml: 0.5, mb: 1 }}>
-          Price: 1 Alps = $0.075
+          Price: 1 Alps = $0.000125
         </Typography>
         <Box component='form' autoComplete='off' onSubmit={submitHandler}>
           <Box
