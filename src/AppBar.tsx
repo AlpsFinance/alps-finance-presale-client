@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,10 +9,30 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import { Menu } from "@mui/icons-material";
+import { useMoralis } from "react-moralis";
 
 const CustomAppBar: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const { isAuthenticated, authenticate, user, logout } = useMoralis();
+  const [walletAddress, setWalletAddress] = useState("");
+  useEffect(() => {
+    if (isAuthenticated) {
+      const ethAddress = user?.get("ethAddress");
+      setWalletAddress(ethAddress.replace(ethAddress.substring(6, 38), "****"));
+    }
+    //eslint - disable - next - line;
+  }, [isAuthenticated]);
+
+  const loginControl = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!isAuthenticated) {
+      authenticate();
+    } else {
+      logout();
+    }
+  };
   const toggleDrawer =
     (anchor: String, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -75,19 +95,14 @@ const CustomAppBar: FC = () => {
           variant='contained'
           sx={{
             borderRadius: 30,
-            color: "white",
-            background:
-              "linear-gradient(274.61deg, #0D7E06 18.06%, #00BB89 125.98%)",
+            color: "#0D7E06",
+            background: "white",
             ml: 1,
             fontWeight: "bold",
           }}
-          onClick={() => {
-            const AlpsFinanceAppURL = "https://app.alps.finance";
-            window.open(AlpsFinanceAppURL, "_blank") ||
-              window.location.replace(AlpsFinanceAppURL);
-          }}
+          onClick={loginControl}
         >
-          Launch App
+          {isAuthenticated ? walletAddress : "Connect Wallet"}
         </Button>
       </List>
     </Box>
@@ -136,22 +151,18 @@ const CustomAppBar: FC = () => {
           variant='contained'
           sx={{
             borderRadius: 30,
-            color: "white",
-            background:
-              "linear-gradient(274.61deg, #0D7E06 18.06%, #00BB89 125.98%)",
+            color: "#0D7E06",
+            background: "white",
             ml: 1,
             fontWeight: "bold",
             "@media (max-width: 780px)": {
               display: "none",
             },
+            textTransform: "none",
           }}
-          onClick={() => {
-            const AlpsFinanceAppURL = "https://app.alps.finance";
-            window.open(AlpsFinanceAppURL, "_blank") ||
-              window.location.replace(AlpsFinanceAppURL);
-          }}
+          onClick={loginControl}
         >
-          Launch App
+          {isAuthenticated ? walletAddress : "Connect Wallet"}
         </Button>
         <Grid
           container

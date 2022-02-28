@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { calculateTimeLeft } from "./utility/helper";
 
 interface Props {
@@ -19,12 +19,7 @@ const AlpsTokenPresale: FC<Props> = (props) => {
   });
 
   return (
-    <Grid
-      container
-      justifyContent='center'
-      alignItems='start'
-      // sx={{ ml: isLargeScreen ? 1 : 0 }}
-    >
+    <Grid container justifyContent='center' alignItems='start'>
       <Box
         sx={{
           background:

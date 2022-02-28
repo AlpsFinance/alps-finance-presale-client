@@ -21,7 +21,7 @@ interface props {
 }
 const BuyContainer: FC<props> = (props: props) => {
   const { isLargeScreen } = props;
-  const { isWeb3Enabled, isWeb3EnableLoading, enableWeb3 } = useMoralis();
+  const { isAuthenticated } = useMoralis();
   const { fetch } = useWeb3ExecuteFunction();
 
   const currencies = [
@@ -55,7 +55,6 @@ const BuyContainer: FC<props> = (props: props) => {
     console.log(price);
   };
 
-  
   const [isCalculating, setIsCalculating] = useState(false);
 
   const priceOracleAddresses = {
@@ -65,7 +64,7 @@ const BuyContainer: FC<props> = (props: props) => {
   };
 
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isAuthenticated) {
       setIsCalculating(true);
       if (token === "FTM") {
         fetch({
@@ -83,7 +82,10 @@ const BuyContainer: FC<props> = (props: props) => {
             setAmount(
               String(
                 _.ceil(
-                  25 / new BigNumber(answer.toString()).dividedBy("100000000").toNumber(),
+                  25 /
+                    new BigNumber(answer.toString())
+                      .dividedBy("100000000")
+                      .toNumber(),
                   2
                 )
               )
@@ -106,7 +108,10 @@ const BuyContainer: FC<props> = (props: props) => {
             setAmount(
               String(
                 _.ceil(
-                  25 / new BigNumber(answer.toString()).dividedBy("100000000").toNumber(),
+                  25 /
+                    new BigNumber(answer.toString())
+                      .dividedBy("100000000")
+                      .toNumber(),
                   2
                 )
               )
@@ -129,7 +134,10 @@ const BuyContainer: FC<props> = (props: props) => {
             setAmount(
               String(
                 _.ceil(
-                  25 / new BigNumber(answer.toString()).dividedBy("100000000").toNumber(),
+                  25 /
+                    new BigNumber(answer.toString())
+                      .dividedBy("100000000")
+                      .toNumber(),
                   2
                 )
               )
@@ -137,11 +145,9 @@ const BuyContainer: FC<props> = (props: props) => {
           },
         });
       }
-    } else if (!isWeb3EnableLoading) {
-      enableWeb3();
     }
     // eslint-disable-next-line
-  }, [isWeb3Enabled, token]);
+  }, [isAuthenticated, token]);
   return (
     <Grid item lg={5} px={isLargeScreen ? 5 : 0} mt={2} mb={2}>
       <Typography variant='h5' sx={{ mb: 2 }}>

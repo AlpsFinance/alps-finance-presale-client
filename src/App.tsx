@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { useMoralis } from "react-moralis";
 import { useTheme } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Box, Tooltip } from "@mui/material";
@@ -12,18 +11,12 @@ import AlpsTokenPresale from "./AlpsTokenPresale";
 import Footer from "./Footer";
 import Timeline from "./Timeline";
 import BuyContainer from "./BuyContainer";
+import WrongNetworkModal from "./WrongNetworkModal";
 
 export default function App() {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const [copied, setCopied] = useState(false);
-  const { enableWeb3, isWeb3Enabled, isWeb3EnableLoading } = useMoralis();
-  useEffect(() => {
-    if (!isWeb3Enabled && !isWeb3EnableLoading) {
-      enableWeb3();
-    }
-    // eslint-disable-next-line
-  }, [isWeb3Enabled]);
 
   return (
     <Box>
@@ -133,6 +126,7 @@ export default function App() {
       </Box>
       <Timeline />
       <Footer />
+      <WrongNetworkModal />
     </Box>
   );
 }
