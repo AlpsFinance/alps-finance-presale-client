@@ -44,8 +44,8 @@ const WrongNetworkModal: FC = () => {
           Wrong Chain!
         </Typography>
         <Typography id='modal-modal-description' sx={{ mt: 2 }}>
-          Alps Finance only support Mainnet Fantom. Please click button below to
-          change to Fanton Network
+          Alps Finance only support <b>Fantom Opera Mainnet</b>. Please click
+          button below to change to Fantom Network
         </Typography>
         <Grid container justifyContent='center' alignItems='center' pt={1}>
           <Button
