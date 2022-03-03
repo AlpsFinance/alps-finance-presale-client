@@ -3,20 +3,76 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import { calculateTimeLeft } from "./utility/helper";
+import { useMoralis } from "react-moralis";
+import { preSaleAbi } from "./utility/presaleabi";
+import { CHAIN_SYMBOL, PRESALE_CONTRACT_ADDRESS } from "./constant";
+import { useApiContract  } from 'react-moralis'
 
 interface Props {
   isLargeScreen: Boolean;
 }
 
 const AlpsTokenPresale: FC<Props> = (props) => {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(Date.now()));
+  const [currentRound, setCurrentRound] = useState<number>(1);
   const { isLargeScreen } = props;
+  const { isAuthenticated } = useMoralis();
+  const getCurrentPresaleRoundFunction = useApiContract({
+		address: PRESALE_CONTRACT_ADDRESS,
+		functionName: 'getCurrentPresaleRound',
+		chain: CHAIN_SYMBOL,
+		abi: preSaleAbi.abi,
+  })
+  const {data, runContractFunction} = useApiContract({
+		address: PRESALE_CONTRACT_ADDRESS,
+		functionName: 'presaleDetailsMapping',
+		chain: CHAIN_SYMBOL,
+    abi: preSaleAbi.abi,
+    params: {"": (currentRound + 1).toString()}
+  })
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-    return () => clearTimeout(timer);
-  });
+    if (isAuthenticated)
+      if (currentRound < 2)
+        runContractFunction();
+      else
+        setTimeLeft(calculateTimeLeft(Date.now()));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRound, isAuthenticated])
+
+  async function Fetch() {
+    try {
+      const res = await getCurrentPresaleRoundFunction.runContractFunction()
+      setCurrentRound(Number(res));
+      // const nextRound = await getNextRoundFunction.runContractFunction();
+      // console.log(res, nextRound)
+    } catch (err) {
+      console.log(err)
+    }
+	}
+
+  useEffect(() => {
+    if(isAuthenticated)
+      Fetch()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated])
+
+  let timer: any;
+  useEffect(() => {
+    if (data) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      timer = setInterval(() => {
+        const leftTime = calculateTimeLeft(1000 * Number((data as any).startingTime));
+        if (leftTime.days === 0 && leftTime.hours === 0 && leftTime.minutes === 0 && leftTime.seconds === 0) {
+          Fetch();
+        }
+        setTimeLeft(leftTime);
+      }, 1000);
+    } else {
+      clearTimeout(timer);
+    }
+    return () => clearInterval(timer);
+  }, [data]);
+
 
   return (
     <Grid container justifyContent='center' alignItems='start'>
@@ -35,7 +91,7 @@ const AlpsTokenPresale: FC<Props> = (props) => {
           }}
         >
           <Grid container justifyContent='center' alignItems='center' pt={1}>
-            TOKEN PRESALE STARTS IN:
+            TOKEN PRESALE ROUND {currentRound+1} STARTS IN:
           </Grid>
 
           <Grid container spacing={isLargeScreen ? 2 : 0}>

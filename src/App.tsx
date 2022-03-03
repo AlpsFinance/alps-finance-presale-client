@@ -9,7 +9,7 @@ import "./App.css";
 import AppBar from "./AppBar";
 import AlpsTokenPresale from "./AlpsTokenPresale";
 import Footer from "./Footer";
-import Timeline from "./Timeline";
+import Timeline from "./timeline";
 import BuyContainer from "./BuyContainer";
 import WrongNetworkModal from "./WrongNetworkModal";
 

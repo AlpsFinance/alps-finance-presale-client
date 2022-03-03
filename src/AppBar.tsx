@@ -21,7 +21,7 @@ const CustomAppBar: FC = () => {
       const ethAddress = user?.get("ethAddress");
       setWalletAddress(ethAddress.replace(ethAddress.substring(6, 38), "****"));
     }
-    //eslint - disable - next - line;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const loginControl = (event: React.MouseEvent) => {

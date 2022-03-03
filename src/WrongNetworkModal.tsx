@@ -25,9 +25,9 @@ const WrongNetworkModal: FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      if (chainId !== null && chainId !== "0xfa") {
+      if (chainId !== null && chainId !== process.env.REACT_APP_CHAIN_ID) {
         setOpen(true);
-      } else if (chainId === "0xfa") {
+      } else if (chainId === process.env.REACT_APP_CHAIN_ID) {
         setOpen(false);
       }
     }

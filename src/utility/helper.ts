@@ -1,5 +1,5 @@
-export const calculateTimeLeft = () => {
-  let difference = +new Date(1646067600000) - +new Date();
+export const calculateTimeLeft = (timestamp: number) => {
+  let difference = timestamp - Date.now();
 
   let timeLeft = {
     days: 0,
@@ -16,6 +16,9 @@ export const calculateTimeLeft = () => {
       seconds: Math.floor((difference / 1000) % 60),
     };
   }
-
   return timeLeft;
 };
+
+export const regularNumber = (value: number) => {
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
