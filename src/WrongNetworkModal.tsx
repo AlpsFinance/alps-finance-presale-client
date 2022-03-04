@@ -36,21 +36,22 @@ const WrongNetworkModal: FC = () => {
   return (
     <Modal
       open={open}
-      aria-labelledby='modal-modal-title'
-      aria-describedby='modal-modal-description'
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id='modal-modal-title' variant='h6' component='h2'>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
           Wrong Chain!
         </Typography>
-        <Typography id='modal-modal-description' sx={{ mt: 2 }}>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           Alps Finance only support <b>Fantom Opera Mainnet</b>. Please click
-          button below to change to Fantom Network
+          button below to change to Fantom Network. (Note: Use Polygon Mumbai
+          for test)
         </Typography>
-        <Grid container justifyContent='center' alignItems='center' pt={1}>
+        <Grid container justifyContent="center" alignItems="center" pt={1}>
           <Button
-            color='inherit'
-            variant='contained'
+            color="inherit"
+            variant="contained"
             sx={{
               borderRadius: 2,
               background:
@@ -60,7 +61,9 @@ const WrongNetworkModal: FC = () => {
               textTransform: "none",
               color: "white",
             }}
-            onClick={() => switchNetwork(process.env.REACT_APP_CHAIN_ID || "0xfa")}
+            onClick={() =>
+              switchNetwork(process.env.REACT_APP_CHAIN_ID || "0xfa")
+            }
           >
             Change to Fantom Network
           </Button>

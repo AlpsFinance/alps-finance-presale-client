@@ -32,22 +32,22 @@ export default function App() {
         <Grid
           container
           spacing={0}
-          alignItems='center'
-          justifyContent='center'
+          alignItems="center"
+          justifyContent="center"
           pt={2}
           sx={{
             color: "white",
             pb: 5,
             mb: 5,
           }}
-          flexDirection='column'
+          flexDirection="column"
         >
           <Grid item xs={12}>
             <Grid
               container
-              direction='column'
-              justifyContent='center'
-              textAlign='center'
+              direction="column"
+              justifyContent="center"
+              textAlign="center"
               spacing={2}
               mb={2}
             >
@@ -63,15 +63,15 @@ export default function App() {
                 container
                 px={3}
                 mt={2}
-                direction='column'
-                justifyContent='center'
-                textAlign='center'
+                direction="column"
+                justifyContent="center"
+                textAlign="center"
               >
                 <Box>
                   <img
-                    src='placeholder.png'
-                    alt='Placeholder'
-                    loading='lazy'
+                    src="placeholder.png"
+                    alt="Placeholder"
+                    loading="lazy"
                     style={{
                       width: "100%",
                       maxWidth: "750px",
@@ -82,11 +82,11 @@ export default function App() {
             </Grid>
           </Grid>
           <BuyContainer isLargeScreen={isLargeScreen} />
-          <Grid item lg={4} textAlign='left' px={isLargeScreen ? 5 : 0}>
-            <Typography variant='h5' sx={{ mb: 2 }}>
+          <Grid item lg={4} textAlign="left" px={isLargeScreen ? 5 : 0}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
               Token Info
             </Typography>
-            <Grid container direction='row' alignItems='center' spacing={1}>
+            <Grid container direction="row" alignItems="center" spacing={1}>
               <Grid item lg={6} sm={7}>
                 <Typography sx={{ display: "inline" }}>Symbol: </Typography>
                 <Typography fontWeight={600} sx={{ display: "inline" }}>
@@ -100,7 +100,7 @@ export default function App() {
                 </Typography>
               </Grid>
             </Grid>
-            <Grid container direction='row' alignItems='center' spacing={1}>
+            <Grid container direction="row" alignItems="center" spacing={1}>
               <Grid item lg={12}>
                 <Typography sx={{ display: "inline" }}>Contract: </Typography>
                 <Typography fontWeight={600} sx={{ display: "inline", mr: 1 }}>
@@ -113,10 +113,10 @@ export default function App() {
                 >
                   <Tooltip
                     title={copied ? "Copied!" : "Copy To Clipboard"}
-                    placement='top'
+                    placement="top"
                     onClose={() => setTimeout(() => setCopied(false), 200)}
                   >
-                    <img src='./copy-icon.svg' alt='Copy to Clipboard' />
+                    <img src="./copy-icon.svg" alt="Copy to Clipboard" />
                   </Tooltip>
                 </CopyToClipboard>
               </Grid>

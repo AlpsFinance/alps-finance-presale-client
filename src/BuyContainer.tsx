@@ -17,7 +17,7 @@ import { chainlinkFeedAbi } from "./utility/abi";
 import BigNumber from "bignumber.js";
 import { PRESALE_CONTRACT_ADDRESS } from "./constant";
 import { toPresaleContract, toTokenContract } from "./utility/helper";
-import { ClipLoader } from 'react-spinners';
+import { ClipLoader } from "react-spinners";
 
 interface props {
   isLargeScreen: Boolean;
@@ -28,57 +28,60 @@ type CurrencyData = {
   label: string;
   address: string;
   aggregatorAddress: string;
-}
+};
 
 const BuyContainer: FC<props> = (props: props) => {
   const { isLargeScreen } = props;
   const { enableWeb3, isWeb3Enabled, Moralis, user } = useMoralis();
   const getPriceFunc = useWeb3ExecuteFunction();
-  
+
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
-  const chain_id = process.env.REACT_APP_CHAIN_ID || '0xfa';
+  const chain_id = process.env.REACT_APP_CHAIN_ID || "0xfa";
 
-  const currencies:{ [type:string]: CurrencyData[] } = {
-    '0xfa':
-    [
+  const currencies: { [type: string]: CurrencyData[] } = {
+    "0xfa": [
       {
         value: "FTM",
         label: "FTM",
-        address: '0x0000000000000000000000000000000000000000',
-        aggregatorAddress: '0xf4766552D15AE4d256Ad41B6cf2933482B0680dc',
+        address: "0x0000000000000000000000000000000000000000",
+        aggregatorAddress: "0xf4766552D15AE4d256Ad41B6cf2933482B0680dc",
       },
       {
         value: "USDT",
         label: "USDT",
-        address: '0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E',
-        aggregatorAddress: '0x91d5DEFAFfE2854C7D02F50c80FA1fdc8A721e52',
+        address: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
+        aggregatorAddress: "0x91d5DEFAFfE2854C7D02F50c80FA1fdc8A721e52",
       },
       {
         value: "DAI",
         label: "DAI",
-        address: '0x049d68029688eAbF473097a2fC38ef61633A3C7A',
-        aggregatorAddress: '0xF64b636c5dFe1d3555A847341cDC449f612307d0',
+        address: "0x049d68029688eAbF473097a2fC38ef61633A3C7A",
+        aggregatorAddress: "0xF64b636c5dFe1d3555A847341cDC449f612307d0",
       },
     ],
-    '0x13881': [
+    "0x13881": [
       {
         value: "MATIC",
         label: "MATIC",
-        address: '0x0000000000000000000000000000000000000000',
-        aggregatorAddress: '0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada',
+        address: "0x0000000000000000000000000000000000000000",
+        aggregatorAddress: "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada",
       },
       {
         value: "LINK",
         label: "LINK",
-        address: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
-        aggregatorAddress: '0x12162c3E810393dEC01362aBf156D7ecf6159528',
+        address: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
+        aggregatorAddress: "0x12162c3E810393dEC01362aBf156D7ecf6159528",
       },
-    ]
+    ],
   };
   const [token, setToken] = useState<CurrencyData>(currencies[chain_id][0]);
   const changeToken = (event: SelectChangeEvent<string>): void => {
-    setToken(currencies[chain_id].filter((x:CurrencyData)=>x.value===event.target.value)[0]);
+    setToken(
+      currencies[chain_id].filter(
+        (x: CurrencyData) => x.value === event.target.value
+      )[0]
+    );
   };
   const [amount, setAmount] = useState("0.1");
   const changeAmount = (
@@ -97,26 +100,33 @@ const BuyContainer: FC<props> = (props: props) => {
     setIsProcessing(true);
     try {
       const ethAddress = user?.get("ethAddress");
-      if (token.address === '0x0000000000000000000000000000000000000000') {
-        const res = await toPresaleContract().methods.presaleTokens(token.address, Moralis.Units.ETH(amount)).send({
-          from: ethAddress,
-          value: Moralis.Units.ETH(amount),
-        });
-        
+      if (token.address === "0x0000000000000000000000000000000000000000") {
+        const res = await toPresaleContract()
+          .methods.presaleTokens(token.address, Moralis.Units.ETH(amount))
+          .send({
+            from: ethAddress,
+            value: Moralis.Units.ETH(amount),
+          });
+
         console.log(res);
-      }
-      else {
+      } else {
         const tokenContract = toTokenContract(token.address);
-        const approve = await tokenContract.methods.allowance(ethAddress, PRESALE_CONTRACT_ADDRESS).call();
+        const approve = await tokenContract.methods
+          .allowance(ethAddress, PRESALE_CONTRACT_ADDRESS)
+          .call();
         console.log(approve < Moralis.Units.ETH(amount));
         if (approve < Moralis.Units.ETH(amount)) {
-          await tokenContract.methods.approve(PRESALE_CONTRACT_ADDRESS, Moralis.Units.ETH(amount)).send({ from: ethAddress });
+          await tokenContract.methods
+            .approve(PRESALE_CONTRACT_ADDRESS, Moralis.Units.ETH(amount))
+            .send({ from: ethAddress });
         }
-        const res = await toPresaleContract().methods.presaleTokens(token.address, Moralis.Units.ETH(amount)).send({ from: ethAddress });
-        console.log(res)
+        const res = await toPresaleContract()
+          .methods.presaleTokens(token.address, Moralis.Units.ETH(amount))
+          .send({ from: ethAddress });
+        console.log(res);
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     } finally {
       setIsProcessing(false);
     }
@@ -127,33 +137,32 @@ const BuyContainer: FC<props> = (props: props) => {
   useEffect(() => {
     if (isWeb3Enabled) {
       setIsCalculating(true);
-        console.log('getting')
-        getPriceFunc.fetch({
-          params: {
-            abi: chainlinkFeedAbi,
-            functionName: "latestRoundData",
-            contractAddress: token.aggregatorAddress,
-          },
-          onComplete: () => {
-            setIsCalculating(false);
-          },
-          onSuccess: (result: any) => {
-            const { answer } = result;
-            setPrice(answer.toString());
-            setAmount(
-              String(
-                _.ceil(
-                  25 /
-                    new BigNumber(answer.toString())
-                      .dividedBy("100000000")
-                      .toNumber(),
-                  2
-                )
+      console.log("getting");
+      getPriceFunc.fetch({
+        params: {
+          abi: chainlinkFeedAbi,
+          functionName: "latestRoundData",
+          contractAddress: token.aggregatorAddress,
+        },
+        onComplete: () => {
+          setIsCalculating(false);
+        },
+        onSuccess: (result: any) => {
+          const { answer } = result;
+          setPrice(answer.toString());
+          setAmount(
+            String(
+              _.ceil(
+                25 /
+                  new BigNumber(answer.toString())
+                    .dividedBy("100000000")
+                    .toNumber(),
+                2
               )
-            );
-          },
-        });
-
+            )
+          );
+        },
+      });
     } else {
       enableWeb3();
     }
@@ -162,7 +171,7 @@ const BuyContainer: FC<props> = (props: props) => {
 
   return (
     <Grid item lg={5} px={isLargeScreen ? 5 : 0} mt={2} mb={2}>
-      <Typography variant='h5' sx={{ mb: 2 }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
         Presale Round 1
       </Typography>
       <Box
@@ -179,7 +188,7 @@ const BuyContainer: FC<props> = (props: props) => {
         <Typography fontWeight={600} sx={{ ml: 0.5, mb: 1 }}>
           Price: 1 Alps = $0.000125
         </Typography>
-        <Box component='form' autoComplete='off' onSubmit={submitHandler}>
+        <Box component="form" autoComplete="off" onSubmit={submitHandler}>
           <Box
             sx={{
               display: "flex",
@@ -191,7 +200,7 @@ const BuyContainer: FC<props> = (props: props) => {
           >
             <TextField
               required
-              variant='standard'
+              variant="standard"
               value={amount}
               onChange={changeAmount}
               disabled={isCalculating}
@@ -208,14 +217,14 @@ const BuyContainer: FC<props> = (props: props) => {
                 },
               }}
             />
-            <Divider orientation='vertical' flexItem color='white' />
-            <FormControl variant='standard' sx={{ minWidth: 100 }}>
+            <Divider orientation="vertical" flexItem color="white" />
+            <FormControl variant="standard" sx={{ minWidth: 100 }}>
               <Select
-                labelId='demo-simple-select-standard-label'
-                id='demo-simple-select-standard'
+                labelId="demo-simple-select-standard-label"
+                id="demo-simple-select-standard"
                 value={token.value}
                 onChange={changeToken}
-                label='Age'
+                label="Age"
                 disableUnderline
                 sx={{
                   pl: 2,
@@ -226,7 +235,7 @@ const BuyContainer: FC<props> = (props: props) => {
                   },
                 }}
               >
-                {currencies[chain_id].map((option:any) => (
+                {currencies[chain_id].map((option: any) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
@@ -235,8 +244,8 @@ const BuyContainer: FC<props> = (props: props) => {
             </FormControl>
           </Box>
           <Button
-            color='inherit'
-            variant='contained'
+            color="inherit"
+            variant="contained"
             disabled={isProcessing}
             sx={{
               borderRadius: 2,
@@ -248,16 +257,12 @@ const BuyContainer: FC<props> = (props: props) => {
               textTransform: "none",
               color: "black",
             }}
-            type='submit'
+            type="submit"
           >
             {isProcessing ? (
-              <ClipLoader
-                color={'#fff'}
-                loading={isProcessing}
-                size={30}
-              />
+              <ClipLoader color={"#fff"} loading={isProcessing} size={30} />
             ) : (
-              'Buy'
+              "Buy"
             )}
           </Button>
         </Box>
