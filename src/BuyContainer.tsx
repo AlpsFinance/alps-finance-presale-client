@@ -1,6 +1,6 @@
-import { ChangeEvent, FormEvent, useState, FC, useEffect } from "react";
-import _ from "lodash";
-import Typography from "@mui/material/Typography";
+import { ChangeEvent, FormEvent, useState, FC, useEffect } from 'react';
+import _ from 'lodash';
+import Typography from '@mui/material/Typography';
 import {
   Box,
   TextField,
@@ -83,14 +83,14 @@ const BuyContainer: FC<props> = (props: props) => {
       )[0]
     );
   };
-  const [amount, setAmount] = useState("0.1");
+  const [amount, setAmount] = useState('0.1');
   const changeAmount = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ): void => {
     setAmount(event.target.value);
   };
 
-  const [price, setPrice] = useState("1");
+  const [price, setPrice] = useState('1');
   const submitHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log(price, amount);
@@ -177,9 +177,9 @@ const BuyContainer: FC<props> = (props: props) => {
       <Box
         sx={{
           background:
-            "linear-gradient(109.06deg, rgba(18, 209, 6, 0.3) 2.72%, rgba(255, 255, 255, 0) 98.2%)",
-          boxShadow: "0px 4px 5px 3px rgba(18, 209, 6, 0.1)",
-          borderRadius: "10px",
+            'linear-gradient(109.06deg, rgba(18, 209, 6, 0.3) 2.72%, rgba(255, 255, 255, 0) 98.2%)',
+          boxShadow: '0px 4px 5px 3px rgba(18, 209, 6, 0.1)',
+          borderRadius: '10px',
           px: isLargeScreen ? 5 : 1,
           pt: 3,
           pb: 2,
@@ -191,11 +191,11 @@ const BuyContainer: FC<props> = (props: props) => {
         <Box component="form" autoComplete="off" onSubmit={submitHandler}>
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              height: "50px",
-              backgroundColor: "#6E856E",
-              borderRadius: "10px",
+              display: 'flex',
+              flexDirection: 'row',
+              height: '50px',
+              backgroundColor: '#6E856E',
+              borderRadius: '10px',
             }}
           >
             <TextField
@@ -206,14 +206,14 @@ const BuyContainer: FC<props> = (props: props) => {
               disabled={isCalculating}
               InputProps={{
                 disableUnderline: true,
-                inputMode: "decimal",
+                inputMode: 'decimal',
               }}
               sx={{
                 pl: 1,
-                minWidth: "120px",
+                minWidth: '120px',
                 Input: {
-                  height: "40px",
-                  color: "white",
+                  height: '40px',
+                  color: 'white',
                 },
               }}
             />
@@ -228,10 +228,10 @@ const BuyContainer: FC<props> = (props: props) => {
                 disableUnderline
                 sx={{
                   pl: 2,
-                  color: "white",
-                  height: "50px",
+                  color: 'white',
+                  height: '50px',
                   svg: {
-                    color: "white",
+                    color: 'white',
                   },
                 }}
               >
@@ -250,12 +250,12 @@ const BuyContainer: FC<props> = (props: props) => {
             sx={{
               borderRadius: 2,
               background:
-                "linear-gradient(74.61deg, #0D7E06 18.06%, #00BB89 125.98%);",
+                'linear-gradient(74.61deg, #0D7E06 18.06%, #00BB89 125.98%);',
               mt: 1,
-              fontWeight: "bold",
-              width: "100%",
-              textTransform: "none",
-              color: "black",
+              fontWeight: 'bold',
+              width: '100%',
+              textTransform: 'none',
+              color: 'black',
             }}
             type="submit"
           >

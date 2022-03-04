@@ -1,27 +1,27 @@
-import React, { FC, useEffect, useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
-import AlpsLogo from "./AlpsLogo";
-import { Drawer, Grid, Link } from "@mui/material";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import { Menu } from "@mui/icons-material";
-import { useMoralis } from "react-moralis";
+import React, { FC, useEffect, useState } from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import AlpsLogo from './AlpsLogo';
+import { Drawer, Grid, Link } from '@mui/material';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import { Menu } from '@mui/icons-material';
+import { useMoralis } from 'react-moralis';
 
 const CustomAppBar: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { isAuthenticated, authenticate, user, logout } = useMoralis();
-  const [walletAddress, setWalletAddress] = useState("");
+  const [walletAddress, setWalletAddress] = useState('');
   useEffect(() => {
     if (isAuthenticated) {
-      const ethAddress = user?.get("ethAddress");
-      setWalletAddress(ethAddress.replace(ethAddress.substring(6, 38), "****"));
+      const ethAddress = user?.get('ethAddress');
+      setWalletAddress(ethAddress.replace(ethAddress.substring(6, 38), '****'));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const loginControl = (event: React.MouseEvent) => {
@@ -37,9 +37,9 @@ const CustomAppBar: FC = () => {
     (anchor: String, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
       ) {
         return;
       }
@@ -48,26 +48,26 @@ const CustomAppBar: FC = () => {
     };
   const menus = [
     {
-      name: "Home",
-      url: "",
+      name: 'Home',
+      url: '',
     },
     {
-      name: "Litepaper",
-      url: "",
+      name: 'Litepaper',
+      url: '',
     },
     {
-      name: "Documentation",
-      url: "https://docs.alps.finance/",
+      name: 'Documentation',
+      url: 'https://docs.alps.finance/',
     },
     {
-      name: "FAQs",
-      url: "",
+      name: 'FAQs',
+      url: '',
     },
   ];
   const list = (anchor: String) => (
     <Box
       sx={{ width: 250 }}
-      role='presentation'
+      role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
@@ -78,7 +78,7 @@ const CustomAppBar: FC = () => {
               primary={menu.name}
               onClick={() => {
                 const AlpsFinanceAppURL = menu.url;
-                window.open(AlpsFinanceAppURL, "_blank") ||
+                window.open(AlpsFinanceAppURL, '_blank') ||
                   window.location.replace(AlpsFinanceAppURL);
               }}
             />
@@ -87,18 +87,18 @@ const CustomAppBar: FC = () => {
       </List>
       <List>
         <Button
-          color='inherit'
-          variant='contained'
+          color="inherit"
+          variant="contained"
           sx={{
             borderRadius: 30,
-            color: "#0D7E06",
-            background: "white",
+            color: '#0D7E06',
+            background: 'white',
             ml: 1,
-            fontWeight: "bold",
+            fontWeight: 'bold',
           }}
           onClick={loginControl}
         >
-          {isAuthenticated ? walletAddress : "Connect Wallet"}
+          {isAuthenticated ? walletAddress : 'Connect Wallet'}
         </Button>
       </List>
     </Box>
@@ -106,17 +106,17 @@ const CustomAppBar: FC = () => {
 
   return (
     <AppBar
-      position='sticky'
-      color='transparent'
+      position="sticky"
+      color="transparent"
       elevation={0}
       sx={{
         pt: 1.5,
         pb: 1.5,
         pl: 3.5,
-        "@media (min-width: 780px)": {
+        '@media (min-width: 780px)': {
           pr: 3.5,
         },
-        color: "white",
+        color: 'white',
       }}
     >
       <Toolbar>
@@ -124,18 +124,18 @@ const CustomAppBar: FC = () => {
           <AlpsLogo />
         </Box>
         {menus
-          .filter((menu) => menu.name !== "Home")
+          .filter((menu) => menu.name !== 'Home')
           .map((menu, index) => (
             <Link
               key={index}
-              underline={"none"}
-              color={"white"}
+              underline={'none'}
+              color={'white'}
               href={menu.url}
               sx={{
                 pr: 3,
-                fontWeight: "bold",
-                "@media (max-width: 780px)": {
-                  display: "none",
+                fontWeight: 'bold',
+                '@media (max-width: 780px)': {
+                  display: 'none',
                 },
               }}
             >
@@ -143,37 +143,37 @@ const CustomAppBar: FC = () => {
             </Link>
           ))}
         <Button
-          color='inherit'
-          variant='contained'
+          color="inherit"
+          variant="contained"
           sx={{
             borderRadius: 30,
-            color: "#0D7E06",
-            background: "white",
+            color: '#0D7E06',
+            background: 'white',
             ml: 1,
-            fontWeight: "bold",
-            "@media (max-width: 780px)": {
-              display: "none",
+            fontWeight: 'bold',
+            '@media (max-width: 780px)': {
+              display: 'none',
             },
-            textTransform: "none",
+            textTransform: 'none',
           }}
           onClick={loginControl}
         >
-          {isAuthenticated ? walletAddress : "Connect Wallet"}
+          {isAuthenticated ? walletAddress : 'Connect Wallet'}
         </Button>
         <Grid
           container
-          justifyContent='right'
-          alignItems='right'
+          justifyContent="right"
+          alignItems="right"
           sx={{
-            "@media (min-width: 780px)": {
-              display: "none",
+            '@media (min-width: 780px)': {
+              display: 'none',
             },
           }}
         >
           <Grid item>
             <Button
-              onClick={toggleDrawer("right", true)}
-              sx={{ color: "white" }}
+              onClick={toggleDrawer('right', true)}
+              sx={{ color: 'white' }}
             >
               <Menu />
             </Button>
@@ -181,16 +181,16 @@ const CustomAppBar: FC = () => {
         </Grid>
       </Toolbar>
       <Drawer
-        anchor={"right"}
+        anchor={'right'}
         open={isOpen}
-        onClose={toggleDrawer("right", false)}
+        onClose={toggleDrawer('right', false)}
         PaperProps={{
           sx: {
-            backgroundColor: "#C8CACB",
+            backgroundColor: '#C8CACB',
           },
         }}
       >
-        {list("right")}
+        {list('right')}
       </Drawer>
     </AppBar>
   );

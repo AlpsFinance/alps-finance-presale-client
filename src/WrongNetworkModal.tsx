@@ -1,19 +1,19 @@
-import { useState, FC, useEffect } from "react";
-import { useChain, useMoralis } from "react-moralis";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import { Grid } from "@mui/material";
+import { useState, FC, useEffect } from 'react';
+import { useChain, useMoralis } from 'react-moralis';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import { Grid } from '@mui/material';
 
 const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
@@ -55,11 +55,11 @@ const WrongNetworkModal: FC = () => {
             sx={{
               borderRadius: 2,
               background:
-                "linear-gradient(74.61deg, #0D7E06 18.06%, #00BB89 125.98%);",
+                'linear-gradient(74.61deg, #0D7E06 18.06%, #00BB89 125.98%);',
               mt: 1,
-              fontWeight: "bold",
-              textTransform: "none",
-              color: "white",
+              fontWeight: 'bold',
+              textTransform: 'none',
+              color: 'white',
             }}
             onClick={() =>
               switchNetwork(process.env.REACT_APP_CHAIN_ID || "0xfa")

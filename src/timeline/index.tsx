@@ -1,7 +1,7 @@
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import { Box, Button } from "@mui/material";
-import TimelineItem, {TimeLineData} from "./TimelineItem";
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import { Box, Button } from '@mui/material';
+import TimelineItem, { TimeLineData } from './TimelineItem';
 
 const Timeline: React.FC = () => {
   const timelines: TimeLineData[] = [
@@ -22,7 +22,7 @@ const Timeline: React.FC = () => {
       title: 'PRESALE C (21 Mar 2022 - 27 Mar 2022)',
       amount: 100000000,
       unit: '$0.075',
-    }
+    },
   ];
 
   return (
@@ -31,24 +31,24 @@ const Timeline: React.FC = () => {
       sx={{
         my: 5,
       }}
-      justifyContent='center'
+      justifyContent="center"
     >
       <Grid
         item
         lg={5}
         sx={{
-          boxShadow: "0px 3px 11px 4px rgba(18, 209, 6, 0.25)",
+          boxShadow: '0px 3px 11px 4px rgba(18, 209, 6, 0.25)',
           borderRadius: 3,
           pt: 2,
           px: 2,
         }}
       >
-        <Typography variant='h5' sx={{ mb: 2 }}>
+        <Typography variant="h5" sx={{ mb: 2 }}>
           TIMELINE ALPS
         </Typography>
-        {timelines.map((timeline: TimeLineData, index: number) => 
+        {timelines.map((timeline: TimeLineData, index: number) => (
           <TimelineItem {...timeline} key={`timeline-${index}`} />
-        )}
+        ))}
         {/* <Typography fontWeight={600}>
           PRESALE A (18 Feb 2022 - 17 Mar 2022)
         </Typography>
@@ -67,17 +67,17 @@ const Timeline: React.FC = () => {
         <Typography>Amount: 100,000,000</Typography>
         <Typography>Unit: $0.00050</Typography>
         <LinearProgressWithLabel value={progress} /> */}
-        <Box textAlign='center'>
+        <Box textAlign="center">
           <Button
-            color='inherit'
-            variant='contained'
+            color="inherit"
+            variant="contained"
             sx={{
               borderRadius: 5,
-              color: "white",
+              color: 'white',
               background:
-                "linear-gradient(274.61deg, #0D7E06 18.06%, #00BB89 125.98%)",
+                'linear-gradient(274.61deg, #0D7E06 18.06%, #00BB89 125.98%)',
               py: 1,
-              fontWeight: "bold",
+              fontWeight: 'bold',
               mb: 4,
             }}
             onClick={() => {}}
