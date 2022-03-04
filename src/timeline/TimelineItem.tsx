@@ -5,7 +5,7 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { Box } from "@mui/material";
-import { preSaleAbi } from "../utility/presaleabi";
+import preSaleAbi from "@alpsfinance/core/build/contracts/Presale.json";
 import { useApiContract, useMoralis } from "react-moralis";
 import { CHAIN_SYMBOL, PRESALE_CONTRACT_ADDRESS } from "../constant";
 import { regularNumber } from "../utility/helper";

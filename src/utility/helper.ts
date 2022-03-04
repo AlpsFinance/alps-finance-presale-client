@@ -1,3 +1,9 @@
+import Web3 from 'web3';
+// import preSaleAbi from "@alpsfinance/core/build/contracts/Presale.json";
+import { PRESALE_CONTRACT_ADDRESS } from '../constant';
+import { preSaleAbi } from './presaleabi';
+import { tokenAbi } from './tokenAbi';
+
 export const calculateTimeLeft = (timestamp: number) => {
   let difference = timestamp - Date.now();
 
@@ -21,4 +27,32 @@ export const calculateTimeLeft = (timestamp: number) => {
 
 export const regularNumber = (value: number) => {
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+export const toWeb3 = () => {
+  let backupProvider: any = new Web3.providers.HttpProvider(
+    `https://rpc-mumbai.maticvigil.com`,
+  );
+  // if (true) {
+  //   backupProvider = new Web3.providers.WebsocketProvider(
+  //     `wss://mainnet.infura.io/ws/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`,
+  //   );
+  // }
+  return new Web3(Web3.givenProvider || backupProvider);
+};
+
+
+export const toPresaleContract = () => {
+  const web3 = toWeb3();
+  return new web3.eth.Contract(
+    JSON.parse(preSaleAbi),
+    PRESALE_CONTRACT_ADDRESS,
+  );
+};
+export const toTokenContract = (address: string) => {
+  const web3 = toWeb3();
+  return new web3.eth.Contract(
+    JSON.parse(tokenAbi),
+    address,
+  );
 }

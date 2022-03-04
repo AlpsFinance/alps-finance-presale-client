@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import { calculateTimeLeft } from "./utility/helper";
 import { useMoralis } from "react-moralis";
-import { preSaleAbi } from "./utility/presaleabi";
+import preSaleAbi from "@alpsfinance/core/build/contracts/Presale.json";
 import { CHAIN_SYMBOL, PRESALE_CONTRACT_ADDRESS } from "./constant";
 import { useApiContract  } from 'react-moralis'
 

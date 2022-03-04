@@ -60,7 +60,7 @@ const WrongNetworkModal: FC = () => {
               textTransform: "none",
               color: "white",
             }}
-            onClick={() => switchNetwork("0xfa")}
+            onClick={() => switchNetwork(process.env.REACT_APP_CHAIN_ID || "0xfa")}
           >
             Change to Fantom Network
           </Button>
