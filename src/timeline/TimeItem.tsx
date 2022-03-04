@@ -1,21 +1,21 @@
-import { FC, useEffect, useState } from 'react';
-import Typography from '@mui/material/Typography';
+import { FC, useEffect, useState } from "react";
+import Typography from "@mui/material/Typography";
 import LinearProgress, {
   LinearProgressProps,
   linearProgressClasses,
-} from '@mui/material/LinearProgress';
-import { Box } from '@mui/material';
-import preSaleAbi from '@alpsfinance/core/build/contracts/Presale.json';
-import { useApiContract, useMoralis } from 'react-moralis';
-import { CHAIN_SYMBOL, PRESALE_CONTRACT_ADDRESS } from '../constant';
-import { regularNumber } from '../utility/helper';
+} from "@mui/material/LinearProgress";
+import { Box } from "@mui/material";
+import preSaleAbi from "@alpsfinance/core/build/contracts/Presale.json";
+import { useApiContract, useMoralis } from "react-moralis";
+import { CHAIN_SYMBOL, PRESALE_CONTRACT_ADDRESS } from "../constant";
+import { regularNumber } from "../utility/helper";
 
 function LinearProgressWithLabel(
   props: LinearProgressProps & { value: number }
 ) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }} mb={2}>
-      <Box sx={{ width: '100%', mr: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "center" }} mb={2}>
+      <Box sx={{ width: "100%", mr: 1 }}>
         <LinearProgress
           {...props}
           variant="determinate"
@@ -23,11 +23,11 @@ function LinearProgressWithLabel(
             height: 10,
             borderRadius: 5,
             [`&.${linearProgressClasses.colorPrimary}`]: {
-              backgroundColor: '#C7BFED',
+              backgroundColor: "#C7BFED",
             },
             [`& .${linearProgressClasses.bar}`]: {
               borderRadius: 5,
-              backgroundColor: '#0D7E06',
+              backgroundColor: "#0D7E06",
             },
           }}
         />
@@ -48,13 +48,18 @@ export type TimeLineData = {
   unit: string;
 };
 
-const TimelineItem: FC<TimeLineData> = ({ round, title, amount, unit }) => {
+export const TimelineItem: FC<TimeLineData> = ({
+  round,
+  title,
+  amount,
+  unit,
+}) => {
   const [progress, setProgress] = useState<number>(-1);
   const { isAuthenticated, Moralis } = useMoralis();
 
   const { data, runContractFunction } = useApiContract({
     address: PRESALE_CONTRACT_ADDRESS,
-    functionName: 'getPresaleAmountByRound',
+    functionName: "getPresaleAmountByRound",
     chain: CHAIN_SYMBOL,
     abi: preSaleAbi.abi,
     params: { _presaleRound: round.toString() },
@@ -110,5 +115,3 @@ const TimelineItem: FC<TimeLineData> = ({ round, title, amount, unit }) => {
     </>
   );
 };
-
-export default TimelineItem;

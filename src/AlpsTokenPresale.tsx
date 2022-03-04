@@ -1,12 +1,12 @@
-import { FC, useEffect, useState } from 'react';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import { Box } from '@mui/material';
-import { calculateTimeLeft } from './utility/helper';
-import { useMoralis } from 'react-moralis';
-import preSaleAbi from '@alpsfinance/core/build/contracts/Presale.json';
-import { CHAIN_SYMBOL, PRESALE_CONTRACT_ADDRESS } from './constant';
-import { useApiContract } from 'react-moralis';
+import { FC, useEffect, useState } from "react";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { Box } from "@mui/material";
+import { calculateTimeLeft } from "./utility/helper";
+import { useMoralis } from "react-moralis";
+import preSaleAbi from "@alpsfinance/core/build/contracts/Presale.json";
+import { CHAIN_SYMBOL, PRESALE_CONTRACT_ADDRESS } from "./constant";
+import { useApiContract } from "react-moralis";
 
 interface Props {
   isLargeScreen: Boolean;
@@ -19,16 +19,16 @@ const AlpsTokenPresale: FC<Props> = (props) => {
   const { isAuthenticated } = useMoralis();
   const getCurrentPresaleRoundFunction = useApiContract({
     address: PRESALE_CONTRACT_ADDRESS,
-    functionName: 'getCurrentPresaleRound',
+    functionName: "getCurrentPresaleRound",
     chain: CHAIN_SYMBOL,
     abi: preSaleAbi.abi,
   });
   const { data, runContractFunction } = useApiContract({
     address: PRESALE_CONTRACT_ADDRESS,
-    functionName: 'presaleDetailsMapping',
+    functionName: "presaleDetailsMapping",
     chain: CHAIN_SYMBOL,
     abi: preSaleAbi.abi,
-    params: { '': (currentRound + 1).toString() },
+    params: { "": (currentRound + 1).toString() },
   });
   useEffect(() => {
     if (isAuthenticated)
@@ -82,15 +82,15 @@ const AlpsTokenPresale: FC<Props> = (props) => {
       <Box
         sx={{
           background:
-            'linear-gradient(109.06deg, rgba(18, 209, 6, 0.3) 2.72%, rgba(255, 255, 255, 0) 98.2%)',
-          boxShadow: '0px 4px 5px 3px rgba(18, 209, 6, 0.1)',
-          borderRadius: '10px',
+            "linear-gradient(109.06deg, rgba(18, 209, 6, 0.3) 2.72%, rgba(255, 255, 255, 0) 98.2%)",
+          boxShadow: "0px 4px 5px 3px rgba(18, 209, 6, 0.1)",
+          borderRadius: "10px",
           p: isLargeScreen ? 5 : 3,
         }}
       >
         <Box
           sx={{
-            background: 'rgba(0, 36, 0, 0.5)',
+            background: "rgba(0, 36, 0, 0.5)",
           }}
         >
           <Grid container justifyContent="center" alignItems="center" pt={1}>
@@ -101,12 +101,12 @@ const AlpsTokenPresale: FC<Props> = (props) => {
             <Grid item>
               <Box
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  width: 'fit-content',
-                  color: 'white',
-                  textTransform: 'uppercase',
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "fit-content",
+                  color: "white",
+                  textTransform: "uppercase",
                 }}
               >
                 <Box

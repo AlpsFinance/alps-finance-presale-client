@@ -1,21 +1,21 @@
-import { FC } from 'react';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import RedditIcon from '@mui/icons-material/Reddit';
-import TelegramIcon from '@mui/icons-material/Telegram';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
-import { SvgIconTypeMap } from '@mui/material';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import { FaMedium, FaInstagram } from 'react-icons/fa';
-import { IconType } from 'react-icons';
+import { FC } from "react";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import RedditIcon from "@mui/icons-material/Reddit";
+import TelegramIcon from "@mui/icons-material/Telegram";
+import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { SvgIconTypeMap } from "@mui/material";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import { FaMedium, FaInstagram } from "react-icons/fa";
+import { IconType } from "react-icons";
 
 interface SocialMediaObject {
   name: string;
   icon:
     | IconType
-    | (OverridableComponent<SvgIconTypeMap<{}, 'svg'>> & {
+    | (OverridableComponent<SvgIconTypeMap<{}, "svg">> & {
         muiName: string;
       });
   color: string;
@@ -24,40 +24,40 @@ interface SocialMediaObject {
 
 const SocialMediaArray: SocialMediaObject[] = [
   {
-    name: 'reddit',
+    name: "reddit",
     icon: RedditIcon,
-    color: '#FF4500',
-    link: 'https://www.reddit.com/u/alpsfinance/',
+    color: "#FF4500",
+    link: "https://www.reddit.com/u/alpsfinance/",
   },
   {
-    name: 'instagram',
+    name: "instagram",
     icon: FaInstagram,
-    color: '#C13584',
-    link: 'https://instagram.com/alpsfinance',
+    color: "#C13584",
+    link: "https://instagram.com/alpsfinance",
   },
   {
-    name: 'twitter',
+    name: "twitter",
     icon: TwitterIcon,
-    color: '#00acee',
-    link: 'https://twitter.com/alpsfinance',
+    color: "#00acee",
+    link: "https://twitter.com/alpsfinance",
   },
   {
-    name: 'telegram',
+    name: "telegram",
     icon: TelegramIcon,
-    color: '#0088CC',
-    link: 'https://t.me/AlpsFinance',
+    color: "#0088CC",
+    link: "https://t.me/AlpsFinance",
   },
   {
-    name: 'github',
+    name: "github",
     icon: GitHubIcon,
-    color: '#333',
-    link: 'https://github.com/AlpsFinance',
+    color: "#333",
+    link: "https://github.com/AlpsFinance",
   },
   {
-    name: 'medium',
+    name: "medium",
     icon: FaMedium,
-    color: 'black',
-    link: 'https://alpsfinance.medium.com',
+    color: "black",
+    link: "https://alpsfinance.medium.com",
   },
 ];
 
@@ -66,11 +66,11 @@ const Footer: FC = () => {
     <Grid
       container
       sx={{
-        paddingTop: '3rem',
-        paddingBottom: '3rem',
+        paddingTop: "3rem",
+        paddingBottom: "3rem",
         background:
-          'linear-gradient(91.05deg, #0D7E06 -25.94%, #002400 98.77%)',
-        color: 'white',
+          "linear-gradient(91.05deg, #0D7E06 -25.94%, #002400 98.77%)",
+        color: "white",
         p: 2,
       }}
       justifyContent="center"
@@ -93,12 +93,12 @@ const Footer: FC = () => {
                   <IconButton
                     aria-label={name}
                     sx={{
-                      '&:hover': { color },
-                      transition: '0.3s',
-                      color: 'white',
+                      "&:hover": { color },
+                      transition: "0.3s",
+                      color: "white",
                     }}
                     onClick={() =>
-                      window.open(link, '_blank') ||
+                      window.open(link, "_blank") ||
                       window.location.replace(link)
                     }
                   >
