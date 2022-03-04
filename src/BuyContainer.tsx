@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
 import { chainlinkFeedAbi } from "./utility/abi";
+import { preSaleAbi } from "./utility/presaleabi";
 import BigNumber from "bignumber.js";
 
 interface props {
@@ -21,26 +22,32 @@ interface props {
 }
 const BuyContainer: FC<props> = (props: props) => {
   const { isLargeScreen } = props;
-  const { isAuthenticated } = useMoralis();
+  const { isAuthenticated, enableWeb3, isWeb3Enabled, Moralis } = useMoralis();
   const { fetch } = useWeb3ExecuteFunction();
 
-  const currencies = [
+  const tokens = [
     {
-      value: "FTM",
-      label: "FTM",
+      value: "0",
+      label: "MATIC",
+      contractAddress: "0x0000000000000000000000000000000000000000",
+      oracleAddress: "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada",
     },
     {
-      value: "USDT",
+      value: "1",
       label: "USDT",
+      contractAddress: "0x72F09c85234C975Da2B6686e472FE40633fA2Cd9",
+      oracleAddress: "0x92C09849638959196E976289418e5973CC96d645",
     },
     {
-      value: "DAI",
+      value: "2",
       label: "DAI",
+      contractAddress: "0x001B3B4d0F3714Ca98ba10F6042DaEbF0B1B7b6F",
+      oracleAddress: "0x0FCAa9c899EC5A91eBc3D5Dd869De833b06fB046",
     },
   ];
-  const [token, setToken] = useState("FTM");
-  const changeToken = (event: SelectChangeEvent<string>): void => {
-    setToken(event.target.value);
+  const [selectedToken, setToken] = useState(0);
+  const changeToken = (event: SelectChangeEvent<number>): void => {
+    setToken(Number(event.target.value));
   };
   const [amount, setAmount] = useState("0.1");
   const changeAmount = (
@@ -48,106 +55,71 @@ const BuyContainer: FC<props> = (props: props) => {
   ): void => {
     setAmount(event.target.value);
   };
-
-  const [price, setPrice] = useState("1");
-  const submitHandler = (event: FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    console.log(price);
-  };
-
   const [isCalculating, setIsCalculating] = useState(false);
 
-  const priceOracleAddresses = {
-    ftmusd: "0xf4766552D15AE4d256Ad41B6cf2933482B0680dc",
-    usdtusd: "0xF64b636c5dFe1d3555A847341cDC449f612307d0",
-    daiusd: "0x91d5DEFAFfE2854C7D02F50c80FA1fdc8A721e52",
+  const submitHandler = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    fetch({
+      params: {
+        abi: preSaleAbi,
+        functionName: "presaleTokens",
+        contractAddress: "0x446D0E6f6d473ef5Ac7DF1bac47a1740c540a1B3",
+        params: {
+          _paymentTokenAddress: tokens[selectedToken].contractAddress,
+          _amount: new BigNumber(amount).multipliedBy("1000000000000000").toString(),
+        },
+        // msgValue: Moralis.Units.ETH(1),
+      },
+      onComplete: () => {
+        setIsCalculating(false);
+      },
+      onError: (result: any) => {
+        console.log(result);
+      },
+      onSuccess: (result: any) => {
+        alert(true);
+      },
+    });
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!isWeb3Enabled) {
+      enableWeb3();
+    }
+    if (isWeb3Enabled) {
       setIsCalculating(true);
-      if (token === "FTM") {
-        fetch({
-          params: {
-            abi: chainlinkFeedAbi,
-            functionName: "latestRoundData",
-            contractAddress: priceOracleAddresses["ftmusd"],
-          },
-          onComplete: () => {
-            setIsCalculating(false);
-          },
-          onSuccess: (result: any) => {
-            const { answer } = result;
-            setPrice(answer.toString());
-            setAmount(
-              String(
-                _.ceil(
-                  25 /
-                    new BigNumber(answer.toString())
-                      .dividedBy("100000000")
-                      .toNumber(),
-                  2
-                )
+      fetch({
+        params: {
+          abi: chainlinkFeedAbi,
+          functionName: "latestRoundData",
+          contractAddress: tokens[selectedToken].oracleAddress,
+        },
+        onComplete: () => {
+          setIsCalculating(false);
+        },
+        onError: (result: any) => {
+          console.log(result);
+        },
+        onSuccess: (result: any) => {
+          const { answer } = result;
+          setAmount(
+            String(
+              _.ceil(
+                25 /
+                  new BigNumber(answer.toString())
+                    .dividedBy("100000000")
+                    .toNumber(),
+                2
               )
-            );
-          },
-        });
-      } else if (token === "USDT") {
-        fetch({
-          params: {
-            abi: chainlinkFeedAbi,
-            functionName: "latestRoundData",
-            contractAddress: priceOracleAddresses["usdtusd"],
-          },
-          onComplete: () => {
-            setIsCalculating(false);
-          },
-          onSuccess: (result: any) => {
-            const { answer } = result;
-            setPrice(answer.toString());
-            setAmount(
-              String(
-                _.ceil(
-                  25 /
-                    new BigNumber(answer.toString())
-                      .dividedBy("100000000")
-                      .toNumber(),
-                  2
-                )
-              )
-            );
-          },
-        });
-      } else {
-        fetch({
-          params: {
-            abi: chainlinkFeedAbi,
-            functionName: "latestRoundData",
-            contractAddress: priceOracleAddresses["daiusd"],
-          },
-          onComplete: () => {
-            setIsCalculating(false);
-          },
-          onSuccess: (result: any) => {
-            const { answer } = result;
-            setPrice(answer.toString());
-            setAmount(
-              String(
-                _.ceil(
-                  25 /
-                    new BigNumber(answer.toString())
-                      .dividedBy("100000000")
-                      .toNumber(),
-                  2
-                )
-              )
-            );
-          },
-        });
-      }
+            )
+          );
+        },
+      });
+    } else if (!isCalculating) {
+      setIsCalculating(true);
     }
     // eslint-disable-next-line
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, selectedToken]);
   return (
     <Grid item lg={5} px={isLargeScreen ? 5 : 0} mt={2} mb={2}>
       <Typography variant='h5' sx={{ mb: 2 }}>
@@ -201,7 +173,7 @@ const BuyContainer: FC<props> = (props: props) => {
               <Select
                 labelId='demo-simple-select-standard-label'
                 id='demo-simple-select-standard'
-                value={token}
+                value={selectedToken}
                 onChange={changeToken}
                 label='Age'
                 disableUnderline
@@ -214,7 +186,7 @@ const BuyContainer: FC<props> = (props: props) => {
                   },
                 }}
               >
-                {currencies.map((option) => (
+                {tokens.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>

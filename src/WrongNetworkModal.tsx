@@ -25,9 +25,9 @@ const WrongNetworkModal: FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      if (chainId !== null && chainId !== "0xfa") {
+      if (chainId !== null && chainId !== "0x13881") {
         setOpen(true);
-      } else if (chainId === "0xfa") {
+      } else if (chainId === "0x13881") {
         setOpen(false);
       }
     }
@@ -45,7 +45,7 @@ const WrongNetworkModal: FC = () => {
         </Typography>
         <Typography id='modal-modal-description' sx={{ mt: 2 }}>
           Alps Finance only support <b>Fantom Opera Mainnet</b>. Please click
-          button below to change to Fantom Network
+          button below to change to Fantom Network. (Note: Use Polygon Mumbai for test)
         </Typography>
         <Grid container justifyContent='center' alignItems='center' pt={1}>
           <Button
@@ -60,7 +60,7 @@ const WrongNetworkModal: FC = () => {
               textTransform: "none",
               color: "white",
             }}
-            onClick={() => switchNetwork("0xfa")}
+            onClick={() => switchNetwork("0x13881")}
           >
             Change to Fantom Network
           </Button>

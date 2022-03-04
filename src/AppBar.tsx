@@ -60,10 +60,6 @@ const CustomAppBar: FC = () => {
       url: "https://docs.alps.finance/",
     },
     {
-      name: "Blog",
-      url: "",
-    },
-    {
       name: "FAQs",
       url: "",
     },
