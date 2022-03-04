@@ -52,7 +52,8 @@ const WrongNetworkModal: FC = () => {
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           Alps Finance only support <b>Fantom Opera Mainnet</b>. Please click
-          button below to change to Fantom Network
+          button below to change to Fantom Network. (Note: Use Polygon Mumbai
+          for test)
         </Typography>
         <Grid container justifyContent="center" alignItems="center" pt={1}>
           <Button
