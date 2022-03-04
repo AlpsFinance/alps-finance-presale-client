@@ -26,12 +26,12 @@ export const calculateTimeLeft = (timestamp: number) => {
 };
 
 export const regularNumber = (value: number) => {
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-}
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
 
 export const toWeb3 = () => {
   let backupProvider: any = new Web3.providers.HttpProvider(
-    `https://rpc-mumbai.maticvigil.com`,
+    `https://rpc-mumbai.maticvigil.com`
   );
   // if (true) {
   //   backupProvider = new Web3.providers.WebsocketProvider(
@@ -41,18 +41,14 @@ export const toWeb3 = () => {
   return new Web3(Web3.givenProvider || backupProvider);
 };
 
-
 export const toPresaleContract = () => {
   const web3 = toWeb3();
   return new web3.eth.Contract(
     JSON.parse(preSaleAbi),
-    PRESALE_CONTRACT_ADDRESS,
+    PRESALE_CONTRACT_ADDRESS
   );
 };
 export const toTokenContract = (address: string) => {
   const web3 = toWeb3();
-  return new web3.eth.Contract(
-    JSON.parse(tokenAbi),
-    address,
-  );
-}
+  return new web3.eth.Contract(JSON.parse(tokenAbi), address);
+};
