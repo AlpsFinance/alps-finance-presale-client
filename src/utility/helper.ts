@@ -31,7 +31,8 @@ export const regularNumber = (value: number) => {
 
 export const toWeb3 = () => {
   let backupProvider: any = new Web3.providers.HttpProvider(
-    `https://rpc-mumbai.maticvigil.com`
+    process.env.NODE_ENV === "development" ?
+      `https://rpc-mumbai.maticvigil.com` : 'https://rpc.ftm.tools'
   );
   // if (true) {
   //   backupProvider = new Web3.providers.WebsocketProvider(
