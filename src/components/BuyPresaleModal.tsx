@@ -1,5 +1,6 @@
 import { FC, useState, useMemo, useEffect } from "react";
 import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -48,9 +49,21 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
     [paymentTokenAddress]
   );
   const steps = useMemo(
-    () => ["Summary", isERC20 && "Approve", "Buy"],
+    () => ["Summary", isERC20 && "Approve", "Buy"].filter((s) => s),
     [isERC20]
   );
+  const stepsButton = useMemo(() => {
+    switch (activeStep) {
+      case 1:
+        return isERC20 ? "Next" : "Confirm";
+      case 2:
+        return isERC20 ? "Confirm" : "Close";
+      case 3:
+        return "Close";
+      default:
+        return "Next";
+    }
+  }, [activeStep, isERC20]);
 
   const { data: decimals, fetch: fetchDecimals } = useWeb3ExecuteFunction({
     abi: erc20ABI,
@@ -69,41 +82,127 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
     },
   });
 
-  const { fetch: fetchApprove } = useWeb3ExecuteFunction({
+  const {
+    fetch: fetchApprove,
+    isLoading: isApproveLoading,
+    isFetching: isApproveFetching,
+  } = useWeb3ExecuteFunction({
     abi: erc20ABI,
     functionName: "approve",
     contractAddress: paymentTokenAddress,
     params: {
       spender: presaleContractAddress[presaleChain].presale,
       amount: Moralis.Units.Token(
-        estimatedAlpsPrice ?? "0",
+        paymentTokenAmount !== "" ? paymentTokenAmount : "0",
         decimals ? parseInt(decimals as string) : 18
       ),
     },
   });
 
-  const { fetch: fetchPresaleTokens } = useWeb3ExecuteFunction({
+  const {
+    fetch: fetchPresaleTokens,
+    isLoading: isPresaleTokensLoading,
+    isFetching: isPresaleTokensFetching,
+  } = useWeb3ExecuteFunction({
     abi: presaleABI,
     functionName: "presaleTokens",
     contractAddress: presaleContractAddress[presaleChain].presale,
     params: {
       _paymentTokenAddress: paymentTokenAddress,
-      _amount: Moralis.Units.ETH(estimatedAlpsPrice),
+      _amount: Moralis.Units.ETH(
+        paymentTokenAmount !== "" ? paymentTokenAmount : "0"
+      ),
     },
-    msgValue: isERC20 ? "0" : Moralis.Units.ETH(estimatedAlpsPrice),
+    ...(isERC20
+      ? {}
+      : {
+          msgValue: Moralis.Units.ETH(
+            paymentTokenAmount !== "" ? paymentTokenAmount : "0"
+          ),
+        }),
   });
 
+  /**
+   * @name handleNext
+   * @description Handle moving steps to the next step
+   */
   const handleNext = () => {
-    if (activeStep < steps.length) {
+    if (activeStep <= steps.length) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
+  /**
+   * @name handleBack
+   * @description Handle moving steps to one step back
+   */
   const handleBack = () => {
     if (activeStep > 0) {
       setActiveStep((prevActiveStep) => prevActiveStep - 1);
     }
   };
+
+  /**
+   * @name handlePrimaryButton
+   * @description Handle the Primary Green button on the right of the modal
+   */
+  const handlePrimaryButton = () => {
+    switch (activeStep) {
+      case 0:
+        handleNext();
+        break;
+      case 1:
+        if (isERC20) {
+          if (isAllowanceSufficient) {
+            handleNext();
+          } else {
+            enqueueSnackbar("You have not approved yet.", {
+              variant: "warning",
+            });
+          }
+        } else {
+          fetchPresaleTokens({
+            onSuccess: () => handleNext(),
+            onError: () =>
+              enqueueSnackbar(
+                "Failed to purchase $ALPS token. Try again later.",
+                {
+                  variant: "error",
+                }
+              ),
+          });
+        }
+        break;
+      case 2:
+        if (isERC20) {
+          fetchPresaleTokens({
+            onSuccess: () => handleNext(),
+            onError: () =>
+              enqueueSnackbar(
+                "Failed to purchase $ALPS token. Try again later.",
+                {
+                  variant: "error",
+                }
+              ),
+          });
+        } else {
+          handleClose();
+        }
+        break;
+      default:
+        handleClose();
+        break;
+    }
+  };
+
+  const isAllowanceSufficient = useMemo(
+    () =>
+      allowance
+        ? parseInt((allowance as any).toString()) >=
+          parseInt(paymentTokenAmount)
+        : false,
+    [allowance, paymentTokenAmount]
+  );
 
   useEffect(() => {
     if (isInitialized && open && paymentTokenAddress !== NULL_ADDRESS) {
@@ -111,16 +210,14 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
         onSuccess: () =>
           fetchAllowance({
             onError: () =>
-              enqueueSnackbar(
-                "Failed to change to $ALPS token. Please try again later.",
-                { variant: "error" }
-              ),
+              enqueueSnackbar("Failed to fetch data. Please try again later.", {
+                variant: "error",
+              }),
           }),
         onError: () =>
-          enqueueSnackbar(
-            "Failed to change to $ALPS token. Please try again later.",
-            { variant: "error" }
-          ),
+          enqueueSnackbar("Failed to fetch data. Please try again later.", {
+            variant: "error",
+          }),
       });
     }
   }, [
@@ -131,6 +228,13 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
     open,
     paymentTokenAddress,
   ]);
+
+  useEffect(() => {
+    if (!open) {
+      // Reset the steps to 0 when closing
+      setActiveStep(0);
+    }
+  }, [open, setActiveStep]);
 
   return (
     <Dialog
@@ -192,47 +296,187 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
               justifyContent="center"
               alignItems="center"
               spacing={3}
+              sx={{ pt: 3 }}
+            >
+              {isAllowanceSufficient ? (
+                <Grid item>
+                  <Typography textAlign="center">
+                    Looks like you have enough allowance to buy $ALPS token. To
+                    proceed, click the <b>Next</b> button.
+                  </Typography>
+                </Grid>
+              ) : (
+                <>
+                  <Grid item>
+                    <Typography textAlign="center">
+                      Please approve the token before proceeding to buy $ALPS
+                      token.
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <LoadingButton
+                      color="inherit"
+                      variant="contained"
+                      loading={isApproveLoading || isApproveFetching}
+                      sx={{
+                        borderRadius: 2,
+                        background:
+                          "linear-gradient(74.61deg, #0D7E06 18.06%, #00BB89 125.98%);",
+                        fontWeight: "bold",
+                        width: "100%",
+                        textTransform: "none",
+                        color: "white",
+                      }}
+                      onClick={() =>
+                        fetchApprove({
+                          onSuccess: () =>
+                            fetchAllowance({
+                              onError: () =>
+                                enqueueSnackbar(
+                                  "Failed to fetch data. Please try again later.",
+                                  { variant: "error" }
+                                ),
+                            }),
+                          onError: () =>
+                            enqueueSnackbar(
+                              "Failed to approve. Try again later.",
+                              { variant: "error" }
+                            ),
+                        })
+                      }
+                    >
+                      Approve
+                    </LoadingButton>
+                  </Grid>
+                </>
+              )}
+            </Grid>
+          ) : (
+            <Grid
+              container
+              direction="column"
+              justifyContent="center"
+              alignItems="center"
+              spacing={3}
+              sx={{ pt: 3 }}
             >
               <Grid item>
                 <Typography textAlign="center">
-                  Please approve the token before proceeding to buy $ALPS token.
+                  Click the <b>Confirm</b> button the purchase of{" "}
+                  {parseFloat(estimatedAlpsPrice).toFixed(2)} $ALPS token with{" "}
+                  {paymentTokenAmount}{" "}
+                  {
+                    presalePaymentToken[presaleChain].find(
+                      (p) => p?.address === paymentTokenAddress
+                    )?.value
+                  }
+                  .
                 </Typography>
               </Grid>
+            </Grid>
+          ))}
+        {activeStep === 2 &&
+          (isERC20 ? (
+            <Grid
+              container
+              direction="column"
+              justifyContent="center"
+              alignItems="center"
+              spacing={3}
+              sx={{ pt: 3 }}
+            >
               <Grid item>
-                <Button
-                  color="inherit"
-                  variant="contained"
-                  sx={{
-                    borderRadius: 2,
-                    background:
-                      "linear-gradient(74.61deg, #0D7E06 18.06%, #00BB89 125.98%);",
-                    fontWeight: "bold",
-                    width: "100%",
-                    textTransform: "none",
-                    color: "white",
-                  }}
-                  //   onClick={() => fetchApprove()}
-                >
-                  Approve
-                </Button>
+                <Typography textAlign="center">
+                  Click the <b>Confirm</b> button the purchase of{" "}
+                  {parseFloat(estimatedAlpsPrice).toFixed(2)} $ALPS token with{" "}
+                  {paymentTokenAmount}{" "}
+                  {
+                    presalePaymentToken[presaleChain].find(
+                      (p) => p?.address === paymentTokenAddress
+                    )?.value
+                  }
+                  .
+                </Typography>
               </Grid>
             </Grid>
           ) : (
-            <></>
+            <Grid
+              container
+              direction="column"
+              justifyContent="center"
+              alignItems="center"
+              spacing={3}
+              sx={{ pt: 3 }}
+            >
+              <Grid item>
+                <Typography textAlign="center" variant="h5">
+                  Congratulations 🥳
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography textAlign="center" variant="h1">
+                  🎉
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography textAlign="center" variant="h5">
+                  You just purchased {parseFloat(estimatedAlpsPrice).toFixed(2)}{" "}
+                  $ALPS!!!
+                </Typography>
+              </Grid>
+            </Grid>
           ))}
-        {activeStep === 2 && <></>}
+        {activeStep === 3 && (
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            spacing={3}
+            sx={{ pt: 3 }}
+          >
+            <Grid item>
+              <Typography textAlign="center" variant="h5">
+                Congratulations 🥳
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography textAlign="center" variant="h1">
+                🎉
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography textAlign="center" variant="h5">
+                You just purchased {parseFloat(estimatedAlpsPrice).toFixed(2)}{" "}
+                $ALPS!!!
+              </Typography>
+            </Grid>
+          </Grid>
+        )}
       </DialogContent>
       <DialogActions>
         <Button
           onClick={activeStep === 0 ? handleClose : handleBack}
+          disabled={
+            isPresaleTokensFetching ||
+            isPresaleTokensLoading ||
+            isApproveFetching ||
+            isApproveLoading
+          }
           variant="contained"
           color="error"
         >
           {activeStep === 0 ? "Cancel" : "Previous"}
         </Button>
-        <Button onClick={handleNext} variant="contained" color="primary">
-          {activeStep === steps.length - 1 ? "Finish" : "Next"}
-        </Button>
+        <LoadingButton
+          loading={isPresaleTokensFetching || isPresaleTokensLoading}
+          onClick={handlePrimaryButton}
+          variant="contained"
+          color="primary"
+          sx={{ color: "white" }}
+        >
+          {stepsButton}
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

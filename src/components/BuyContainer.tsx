@@ -33,6 +33,9 @@ const BuyContainer: FC = (props) => {
   const { enqueueSnackbar } = useSnackbar();
   const { presaleChain } = usePresaleChain();
   const { currentPresaleRound, presaleDataMapping } = usePresale();
+  const currentPresale = presaleDataMapping.find(
+    (p) => p.round === currentPresaleRound
+  );
   const [paymentTokenInfo, setPaymentTokenInfo] = useState<PaymentTokenData>({
     tokenAddress: NULL_ADDRESS,
     tokenAmount: "0",
@@ -113,16 +116,28 @@ const BuyContainer: FC = (props) => {
   );
   const estimatedAlpsPrice = useMemo(
     () =>
-      parseFloat(
-        Moralis.Units.FromWei(
-          (latestRoundData as any)?.answer ?? "0",
-          parseInt(decimals ?? "18")
-        )
-      ) *
-      parseFloat(
-        paymentTokenInfo.tokenAmount !== "" ? paymentTokenInfo.tokenAmount : "0"
-      ),
-    [Moralis.Units, decimals, latestRoundData, paymentTokenInfo.tokenAmount]
+      isLoading
+        ? 0 // to avoid having not updated decimals and latestRoundData calculated together
+        : (parseFloat(
+            Moralis.Units.FromWei(
+              (latestRoundData as any)?.answer ?? "0",
+              parseInt(decimals ?? "18")
+            )
+          ) *
+            parseFloat(
+              paymentTokenInfo.tokenAmount !== ""
+                ? paymentTokenInfo.tokenAmount
+                : "0"
+            )) /
+          parseFloat(Moralis.Units.FromWei(currentPresale?.usdPrice ?? 1)),
+    [
+      Moralis.Units,
+      currentPresale?.usdPrice,
+      decimals,
+      isLoading,
+      latestRoundData,
+      paymentTokenInfo.tokenAmount,
+    ]
   );
 
   useEffect(() => {
