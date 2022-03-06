@@ -1,0 +1,36 @@
+{
+  "0xfa": [
+    {
+      "value": "FTM",
+      "address": "0x0000000000000000000000000000000000000000",
+      "aggregatorAddress": "0xf4766552D15AE4d256Ad41B6cf2933482B0680dc",
+      "logo": "https://cryptologos.cc/logos/fantom-ftm-logo.svg?v=022"
+    },
+    {
+      "value": "USDT",
+      "address": "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
+      "aggregatorAddress": "0x91d5DEFAFfE2854C7D02F50c80FA1fdc8A721e52",
+      "logo": "https://s2.coinmarketcap.com/static/img/coins/200x200/825.png"
+    },
+    {
+      "value": "DAI",
+      "address": "0x049d68029688eAbF473097a2fC38ef61633A3C7A",
+      "aggregatorAddress": "0xF64b636c5dFe1d3555A847341cDC449f612307d0",
+      "logo": "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png"
+    }
+  ],
+  "0x13881": [
+    {
+      "value": "MATIC",
+      "address": "0x0000000000000000000000000000000000000000",
+      "aggregatorAddress": "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada",
+      "logo": "https://lh3.googleusercontent.com/iCzYZqDqSbdsglDE1ZYVLMpnvP0kA6mkzKJ0wlBp-0YQ5pbqNnmfB6yu5GTafCR_Flo04kZY9g01cmdhjxBXRh4j2ktQ-0ASrS-y=w600"
+    },
+    {
+      "value": "LINK",
+      "address": "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
+      "aggregatorAddress": "0x12162c3E810393dEC01362aBf156D7ecf6159528",
+      "logo": "https://uce50341c472ce84dece1bd0ce33.previews.dropboxusercontent.com/p/thumb/ABc7I7CbqtE-cDMXYl6UULhHqIschIMUhTCkMjmgsaxdjGHXmnMHDvE6IWwI7puFk_PUgCg-OT0S_7teaIlDRSrYe0PQcSCVHUJnWh7NsC4pmhBazvx5may-P4HZhGvnmD86CwovE33Yi5AK7a9JtmwH3mue5F2sTGK0JgfhLIoBL-O1BPexzj9TlOgMFiYyZhnh_EcW0HzGS1cJ7wtkbiU0oStsavxEVZkOEpUuFt_XrmCXTZCY0qs7HHrYfwYE7mNZQJTYOS8JTYt8KcjfoQJ2_4MG3EMYYogspvUM4bYjVGLT5qOrBScbZC8ZJMoQRbil6pxIxUZaNESysE2lA9mUP2aze_UHW1ZcQEheyjgFPbmCa-9VOp-s5sUXaNFsrAg/p.png"
+    }
+  ]
+}

@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@alpsfinance/core": "^0.0.3",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.4.2",
+    "@mui/lab": "^5.0.0-alpha.71",
     "@mui/material": "^5.4.3",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -14,17 +16,21 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
-    "bignumber.js": "^9.0.2",
-    "lodash": "^4.17.21",
+    "@walletconnect/web3-provider": "^1.7.3",
+    "@web3auth/web3auth": "^0.3.3",
+    "magic-sdk": "7.0.0",
     "moralis": "^1.3.2",
+    "notistack": "^2.0.3",
     "react": "^17.0.2",
     "react-copy-to-clipboard": "^5.0.4",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
-    "react-moralis": "^1.3.1",
-    "react-scripts": "5.0.0",
+    "react-moralis": "^1.3.2",
+    "react-scripts": "4.0.3",
     "typescript": "^4.0.3",
+    "walletlink": "^2.5.0",
     "web-vitals": "^0.2.4",
+    "web3": "^1.7.1",
     "workbox-background-sync": "^5.1.3",
     "workbox-broadcast-update": "^5.1.3",
     "workbox-cacheable-response": "^5.1.3",
@@ -42,7 +48,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx src --color",
+    "format": "prettier --write 'src/**/*.{ts,tsx,scss,css,json}'",
+    "isready": "npm run format && npm run lint && npm run build"
   },
   "eslintConfig": {
     "extends": [
@@ -63,7 +72,12 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.179",
-    "@types/react-copy-to-clipboard": "^5.0.2"
+    "@types/react-copy-to-clipboard": "^5.0.2",
+    "eslint": "7.32.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "prettier": "2.4.1",
+    "prettier-eslint": "13.0.0",
+    "prettier-eslint-cli": "5.0.1"
   }
 }
