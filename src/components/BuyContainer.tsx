@@ -1,23 +1,25 @@
-import { ChangeEvent, /*FormEvent*/ useState, FC } from "react";
+import { ChangeEvent, useState, FC, useEffect, useMemo } from "react";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
-// import LoadingButton from "@mui/lab/LoadingButton";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Grid from "@mui/material/Grid";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { useTheme } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useMoralis } from "react-moralis";
+import { useMoralis, useApiContract } from "react-moralis";
+import { useSnackbar } from "notistack";
 import presalePaymentToken from "../constants/presalePaymentToken.json";
 import usePresaleChain from "../hooks/usePresaleChain";
 import NULL_ADDRESS from "../utils/nullAddress";
 import usePresale from "../hooks/usePresale";
 import BuyPresaleModal from "./BuyPresaleModal";
+import chainlinkFeedABI from "../abi/chainlinkePriceFeed.json";
+import { CircularProgress } from "@mui/material";
 
 interface PaymentTokenData {
   tokenAddress: string;
@@ -27,7 +29,8 @@ interface PaymentTokenData {
 const BuyContainer: FC = (props) => {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
-  const { Moralis } = useMoralis();
+  const { Moralis, isInitialized } = useMoralis();
+  const { enqueueSnackbar } = useSnackbar();
   const { presaleChain } = usePresaleChain();
   const { currentPresaleRound, presaleDataMapping } = usePresale();
   const [paymentTokenInfo, setPaymentTokenInfo] = useState<PaymentTokenData>({
@@ -35,24 +38,118 @@ const BuyContainer: FC = (props) => {
     tokenAmount: "0",
   });
   const [open, setOpen] = useState<boolean>(false);
-  const [isCalculating] = useState<boolean>(false);
 
+  const {
+    data: decimals,
+    runContractFunction: runDecimals,
+    isLoading: isDecimalsLoading,
+    isFetching: isDecimalsFetching,
+  } = useApiContract({
+    address: presalePaymentToken[presaleChain].find(
+      (p) => p.address === paymentTokenInfo.tokenAddress
+    )?.aggregatorAddress,
+    functionName: "decimals",
+    abi: chainlinkFeedABI,
+    chain: presaleChain,
+    params: {},
+  });
+
+  const {
+    data: latestRoundData,
+    runContractFunction: runLatestRoundData,
+    isLoading: isLatestRoundDataLoading,
+    isFetching: isLatestRoundDataFetching,
+  } = useApiContract({
+    address: presalePaymentToken[presaleChain].find(
+      (p) => p.address === paymentTokenInfo.tokenAddress
+    )?.aggregatorAddress,
+    functionName: "latestRoundData",
+    abi: chainlinkFeedABI,
+    chain: presaleChain,
+    params: {},
+  });
+
+  /**
+   * @name handleTokenAddressChange
+   * @description Handle Changes of Token Address dropdown
+   */
   const handleTokenAddressChange = (event: SelectChangeEvent<string>): void => {
     setPaymentTokenInfo({
       ...paymentTokenInfo,
       tokenAddress: event.target.value,
     });
   };
+
+  /**
+   * @name handleTokenAmountChange
+   * @description Handle changes of token amount for purchase
+   */
   const handleTokenAmountChange = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ): void => {
-    if (event.target.value === "" || parseFloat(event.target.value)) {
+    if (
+      event.target.value === "" ||
+      /^[0-9]+(\.[0-9]*)?$/.test(event.target.value)
+    ) {
       setPaymentTokenInfo({
         ...paymentTokenInfo,
         tokenAmount: event.target.value,
       });
     }
   };
+
+  const isLoading = useMemo(
+    () =>
+      isDecimalsLoading ||
+      isLatestRoundDataLoading ||
+      isLatestRoundDataFetching ||
+      isDecimalsFetching,
+    [
+      isDecimalsFetching,
+      isDecimalsLoading,
+      isLatestRoundDataFetching,
+      isLatestRoundDataLoading,
+    ]
+  );
+  const estimatedAlpsPrice = useMemo(
+    () =>
+      parseFloat(
+        Moralis.Units.FromWei(
+          (latestRoundData as any)?.answer ?? "0",
+          parseInt(decimals ?? "18")
+        )
+      ) *
+      parseFloat(
+        paymentTokenInfo.tokenAmount !== "" ? paymentTokenInfo.tokenAmount : "0"
+      ),
+    [Moralis.Units, decimals, latestRoundData, paymentTokenInfo.tokenAmount]
+  );
+
+  useEffect(() => {
+    if (isInitialized && paymentTokenInfo.tokenAddress) {
+      runDecimals({
+        onSuccess: () =>
+          runLatestRoundData({
+            onError: () =>
+              enqueueSnackbar(
+                "Failed to convert price to $ALPS token. Please try again later.",
+                { variant: "error" }
+              ),
+          }),
+        onError: () =>
+          enqueueSnackbar(
+            "Failed to convert price to $ALPS token. Please try again later.",
+            { variant: "error" }
+          ),
+      });
+    }
+  }, [
+    enqueueSnackbar,
+    isInitialized,
+    paymentTokenInfo.tokenAddress,
+    runDecimals,
+    runLatestRoundData,
+  ]);
 
   return (
     <>
@@ -77,11 +174,7 @@ const BuyContainer: FC = (props) => {
               ).toString()
             )}
           </Typography>
-          <Box
-            component="form"
-            autoComplete="off"
-            // onSubmit={submitHandler}
-          >
+          <Box component="form" autoComplete="off">
             <Box
               sx={{
                 display: "flex",
@@ -99,7 +192,6 @@ const BuyContainer: FC = (props) => {
                 name="tokenAmount"
                 value={paymentTokenInfo?.tokenAmount}
                 onChange={handleTokenAmountChange}
-                disabled={isCalculating}
                 InputProps={{
                   disableUnderline: true,
                   inputMode: "decimal",
@@ -153,6 +245,16 @@ const BuyContainer: FC = (props) => {
                 </Select>
               </FormControl>
             </Box>
+            <Typography>
+              <i>
+                Est. Received:{" "}
+                {isLoading ? (
+                  <CircularProgress size={15} sx={{ ml: 2 }} />
+                ) : (
+                  `${estimatedAlpsPrice.toFixed(2)} $ALPS`
+                )}{" "}
+              </i>
+            </Typography>
             <Button
               color="inherit"
               variant="contained"
@@ -166,7 +268,16 @@ const BuyContainer: FC = (props) => {
                 textTransform: "none",
                 color: "white",
               }}
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                // Check whether the amount of token wanted to buy is 0 or not
+                if (estimatedAlpsPrice > 0) {
+                  setOpen(true);
+                } else {
+                  enqueueSnackbar("Input the amount bigger than 0!", {
+                    variant: "warning",
+                  });
+                }
+              }}
             >
               Buy
             </Button>
@@ -178,6 +289,7 @@ const BuyContainer: FC = (props) => {
         handleClose={() => setOpen(false)}
         paymentTokenAddress={paymentTokenInfo.tokenAddress}
         paymentTokenAmount={paymentTokenInfo.tokenAmount}
+        estimatedAlpsPrice={estimatedAlpsPrice.toString()}
       />
     </>
   );
