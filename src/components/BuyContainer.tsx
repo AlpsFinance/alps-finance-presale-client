@@ -144,7 +144,11 @@ const BuyContainer: FC = (props) => {
       isLoading
         ? 0 // to avoid having not updated decimals and latestRoundData calculated together
         : paymentTokenUSDValue /
-          parseFloat(Moralis.Units.FromWei(currentPresale?.usdPrice ?? 1)),
+          parseFloat(
+            Moralis.Units.FromWei(
+              currentPresale?.usdPrice ?? "1000000000000000000"
+            )
+          ),
     [Moralis.Units, currentPresale?.usdPrice, isLoading, paymentTokenUSDValue]
   );
 
