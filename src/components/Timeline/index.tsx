@@ -52,6 +52,7 @@ const Timeline: React.FC = () => {
         {timelines.map((timeline: TimeLineData, index: number) => (
           <TimelineItem {...timeline} key={`timeline-${index}`} />
         ))}
+        {/* Comment this out until litepaper comes out */}
         {/* <Box textAlign="center">
           <Button
             color="inherit"
