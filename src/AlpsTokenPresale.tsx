@@ -34,7 +34,6 @@ const AlpsTokenPresale: FC<Props> = (props) => {
     if (isAuthenticated)
       if (currentRound < 2) runContractFunction();
       else setTimeLeft(calculateTimeLeft(Date.now()));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRound, isAuthenticated]);
 
   async function Fetch() {
@@ -50,17 +49,15 @@ const AlpsTokenPresale: FC<Props> = (props) => {
 
   useEffect(() => {
     if (isAuthenticated) Fetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   let timer: any;
   useEffect(() => {
     if (data) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const da: any = data;
+      console.log(da);
       timer = setInterval(() => {
-        const leftTime = calculateTimeLeft(
-          1000 * Number((data as any).startingTime)
-        );
+        const leftTime = calculateTimeLeft(1000 * Number(da.startingTime));
         if (
           leftTime.days === 0 &&
           leftTime.hours === 0 &&

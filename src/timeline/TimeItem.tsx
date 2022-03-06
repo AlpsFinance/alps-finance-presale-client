@@ -69,14 +69,12 @@ export const TimelineItem: FC<TimeLineData> = ({
     if (isAuthenticated) {
       runContractFunction();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   useEffect(() => {
     if (data) {
       setProgress(Number(Moralis.Units.FromWei(data)));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   // const { isWeb3Enabled, enableWeb3 } = useMoralis();
   // const { fetch } = useWeb3ExecuteFunction();

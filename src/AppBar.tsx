@@ -14,38 +14,45 @@ import { useMoralis } from "react-moralis";
 const CustomAppBar: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { isAuthenticated, authenticate, user, logout } = useMoralis();
+  const { isAuthenticated, authenticate, user, logout, Moralis } = useMoralis();
   const [walletAddress, setWalletAddress] = useState("");
   useEffect(() => {
     if (isAuthenticated) {
       const ethAddress = user?.get("ethAddress");
       setWalletAddress(ethAddress.replace(ethAddress.substring(6, 38), "****"));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
+
+  const onLoginW = async () => {
+    //Change made here
+    const user = await authenticate({ provider: "walletconnect" });
+    console.log(user);
+  };
+
+  const onLoginM = async () => {
+    const user = await authenticate();
+    console.log(user);
+  };
 
   const loginControl = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     if (!isAuthenticated) {
-      authenticate();
+      onLoginW();
     } else {
       logout();
     }
   };
-  const toggleDrawer =
-    (anchor: String, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
+  const toggleDrawer = (anchor: String, open: boolean) => (event: any) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
 
-      setIsOpen(open);
-    };
+    setIsOpen(open);
+  };
   const menus = [
     {
       name: "Home",
