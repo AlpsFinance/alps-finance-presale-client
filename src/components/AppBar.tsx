@@ -1,4 +1,11 @@
-import React, { FC, useState, useCallback, useEffect } from "react";
+import React, {
+  FC,
+  useState,
+  useCallback,
+  useEffect,
+  KeyboardEvent,
+  MouseEvent,
+} from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -20,33 +27,15 @@ import AlpsLogoWhite from "../assets/logo/Alps-Logo-Basic-3.svg";
 import AuthenticationModal from "../components/AuthenticationModal";
 
 const CustomAppBar: FC = () => {
-  const { isAuthenticated, authenticate, isAuthenticating, account, logout } =
-    useMoralis();
+  const { isAuthenticated, account } = useMoralis();
   const theme = useTheme();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [isYOffsetMoreThan100, setIsYOffsetMoreThan100] =
     useState<boolean>(false);
 
-  /**
-   * @name handleLogin
-   * @description Handle Connecting with Web3 Wallet (Metamask, WalletConnect, etc).
-   *
-   * @param event Mouse Event
-   */
-  const handleLogin = (event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!isAuthenticated) {
-      authenticate({ signingMessage: "Alps Finance Presale Authentication" });
-    } else {
-      logout();
-    }
-  };
-
   const toggleDrawer =
-    (anchor: String, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
+    (_: String, open: boolean) => (event: KeyboardEvent | MouseEvent) => {
       if (
         event.type === "keydown" &&
         ((event as React.KeyboardEvent).key === "Tab" ||
@@ -95,7 +84,6 @@ const CustomAppBar: FC = () => {
         <LoadingButton
           color="inherit"
           variant="contained"
-          loading={isAuthenticating}
           sx={{
             borderRadius: 30,
             color: "#0D7E06",
@@ -103,7 +91,7 @@ const CustomAppBar: FC = () => {
             ml: 1,
             fontWeight: "bold",
           }}
-          onClick={handleLogin}
+          onClick={() => setIsAuthModalOpen(true)}
         >
           {isAuthenticated
             ? getEllipsisText(account as string)
@@ -174,7 +162,6 @@ const CustomAppBar: FC = () => {
           <LoadingButton
             color="inherit"
             variant="contained"
-            loading={isAuthenticating}
             sx={{
               borderRadius: 30,
               color: "#0D7E06",

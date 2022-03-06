@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Fade from "@mui/material/Fade";
 import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
 import CircularProgress from "@mui/material/CircularProgress";
 import WalletLinkConnector from "../connectors/WalletLinkConnector";
 import MetamaskLogo from "../assets/wallet/metamask.svg";
@@ -138,165 +139,168 @@ const AuthenticationModal: FC<AuthenticationModalProps> = (props) => {
             : `${isAuthenticated ? "Disconnect" : "Connect"}  Wallet`}
         </b>
       </DialogTitle>
-      {!isAuthenticated ? (
-        <Grid
-          container
-          alignItems="center"
-          justifyContent="center"
-          direction="column"
-          sx={{ mb: 3 }}
-          spacing={3}
-        >
-          {disconnectLoading ? (
-            <CircularProgress sx={{ mt: 5, mb: 5 }} />
-          ) : (
-            <>
-              <Grid item>
-                {!isAuthenticated && !isAuthenticating && (
-                  <Typography textAlign="center">
-                    Select one of the following wallet to connect
-                  </Typography>
-                )}
-              </Grid>
-              <Grid item>
-                <LoadingButton
-                  onClick={() => onAuthentication(AuthenticationType.METAMASK)}
-                  color="inherit"
-                  variant="outlined"
-                  loading={
-                    isAuthenticating &&
-                    walletAuth === AuthenticationType.METAMASK
-                  }
-                  disabled={
-                    isAuthenticating &&
-                    walletAuth !== AuthenticationType.METAMASK
-                  }
-                  fullWidth
-                  sx={{ minWidth: "300px", minHeight: "56px" }}
-                >
-                  <Grid container justifyContent="center" alignItems="center">
-                    <Grid item xs={1} sx={{ pt: 1 }}>
-                      <img
-                        src={MetamaskLogo}
-                        alt="Metamask"
-                        height="40px"
-                        width="auto"
-                        style={{ marginRight: "0.5rem" }}
-                      />
+      <DialogContent>
+        {!isAuthenticated ? (
+          <Grid
+            container
+            alignItems="center"
+            justifyContent="center"
+            direction="column"
+            sx={{ mb: 3 }}
+            spacing={3}
+          >
+            {disconnectLoading ? (
+              <CircularProgress sx={{ mt: 5, mb: 2 }} />
+            ) : (
+              <>
+                <Grid item>
+                  {!isAuthenticated && !isAuthenticating && (
+                    <Typography textAlign="center">
+                      Select one of the following wallet to connect
+                    </Typography>
+                  )}
+                </Grid>
+                <Grid item>
+                  <LoadingButton
+                    onClick={() =>
+                      onAuthentication(AuthenticationType.METAMASK)
+                    }
+                    color="inherit"
+                    variant="outlined"
+                    loading={
+                      isAuthenticating &&
+                      walletAuth === AuthenticationType.METAMASK
+                    }
+                    disabled={
+                      isAuthenticating &&
+                      walletAuth !== AuthenticationType.METAMASK
+                    }
+                    fullWidth
+                    sx={{ minWidth: "300px", minHeight: "56px" }}
+                  >
+                    <Grid container justifyContent="center" alignItems="center">
+                      <Grid item xs={1} sx={{ pt: 1 }}>
+                        <img
+                          src={MetamaskLogo}
+                          alt="Metamask"
+                          height="40px"
+                          width="auto"
+                          style={{ marginRight: "0.5rem" }}
+                        />
+                      </Grid>
+                      <Grid item xs={11}>
+                        Metamask
+                      </Grid>
                     </Grid>
-                    <Grid item xs={11}>
-                      Metamask
+                  </LoadingButton>
+                </Grid>
+                <Grid item>
+                  <LoadingButton
+                    onClick={() =>
+                      onAuthentication(AuthenticationType.WALLETCONNECT)
+                    }
+                    color="inherit"
+                    variant="outlined"
+                    loading={
+                      isAuthenticating &&
+                      walletAuth === AuthenticationType.WALLETCONNECT
+                    }
+                    disabled={
+                      isAuthenticating &&
+                      walletAuth !== AuthenticationType.WALLETCONNECT
+                    }
+                    fullWidth
+                    sx={{ minWidth: "300px", minHeight: "56px" }}
+                  >
+                    <Grid container justifyContent="center" alignItems="center">
+                      <Grid item xs={1} sx={{ pt: 1 }}>
+                        <img
+                          src={WalletConnectLogo}
+                          alt="Metamask"
+                          height="35px"
+                          width="auto"
+                          style={{ marginRight: "0.5rem" }}
+                        />
+                      </Grid>
+                      <Grid item xs={11}>
+                        WalletConnect
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </LoadingButton>
-              </Grid>
-              <Grid item>
-                <LoadingButton
-                  onClick={() =>
-                    onAuthentication(AuthenticationType.WALLETCONNECT)
-                  }
-                  color="inherit"
-                  variant="outlined"
-                  loading={
-                    isAuthenticating &&
-                    walletAuth === AuthenticationType.WALLETCONNECT
-                  }
-                  disabled={
-                    isAuthenticating &&
-                    walletAuth !== AuthenticationType.WALLETCONNECT
-                  }
-                  fullWidth
-                  sx={{ minWidth: "300px", minHeight: "56px" }}
-                >
-                  <Grid container justifyContent="center" alignItems="center">
-                    <Grid item xs={1} sx={{ pt: 1 }}>
-                      <img
-                        src={WalletConnectLogo}
-                        alt="Metamask"
-                        height="35px"
-                        width="auto"
-                        style={{ marginRight: "0.5rem" }}
-                      />
+                  </LoadingButton>
+                </Grid>
+                <Grid item>
+                  <LoadingButton
+                    onClick={() => {
+                      setWalletAuth(AuthenticationType.COINBASE);
+                      onAuthentication(AuthenticationType.COINBASE);
+                    }}
+                    color="inherit"
+                    variant="outlined"
+                    loading={
+                      isAuthenticating &&
+                      walletAuth === AuthenticationType.COINBASE
+                    }
+                    disabled={
+                      isAuthenticating &&
+                      walletAuth !== AuthenticationType.COINBASE
+                    }
+                    fullWidth
+                    sx={{ minWidth: "300px", minHeight: "56px" }}
+                  >
+                    <Grid container justifyContent="center" alignItems="center">
+                      <Grid item xs={1} sx={{ pt: 1 }}>
+                        <img
+                          src={CoinbaseLogo}
+                          alt="Metamask"
+                          height="35px"
+                          width="auto"
+                          style={{ marginRight: "0.5rem" }}
+                        />
+                      </Grid>
+                      <Grid item xs={11}>
+                        Coinbase
+                      </Grid>
                     </Grid>
-                    <Grid item xs={11}>
-                      WalletConnect
-                    </Grid>
-                  </Grid>
-                </LoadingButton>
-              </Grid>
-              <Grid item>
-                <LoadingButton
-                  onClick={() => {
-                    setWalletAuth(AuthenticationType.COINBASE);
-                    onAuthentication(AuthenticationType.COINBASE);
-                  }}
-                  color="inherit"
-                  variant="outlined"
-                  loading={
-                    isAuthenticating &&
-                    walletAuth === AuthenticationType.COINBASE
-                  }
-                  disabled={
-                    isAuthenticating &&
-                    walletAuth !== AuthenticationType.COINBASE
-                  }
-                  fullWidth
-                  sx={{ minWidth: "300px", minHeight: "56px" }}
-                >
-                  <Grid container justifyContent="center" alignItems="center">
-                    <Grid item xs={1} sx={{ pt: 1 }}>
-                      <img
-                        src={CoinbaseLogo}
-                        alt="Metamask"
-                        height="35px"
-                        width="auto"
-                        style={{ marginRight: "0.5rem" }}
-                      />
-                    </Grid>
-                    <Grid item xs={11}>
-                      Coinbase
-                    </Grid>
-                  </Grid>
-                </LoadingButton>
-              </Grid>
-            </>
-          )}
-        </Grid>
-      ) : (
-        <Grid
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="left"
-          sx={{ pb: 3, pl: 3, pr: 3 }}
-        >
-          <Grid item>
-            <Typography sx={{ mb: 2 }}>
-              Are you sure you want to disconnect your wallet?
-            </Typography>
+                  </LoadingButton>
+                </Grid>
+              </>
+            )}
           </Grid>
-          <Grid item>
-            <Button
-              color="inherit"
-              variant="contained"
-              fullWidth
-              sx={{
-                borderRadius: 2,
-                background:
-                  "linear-gradient(74.61deg, #0D7E06 18.06%, #00BB89 125.98%);",
-                mt: 1,
-                fontWeight: "bold",
-                width: "100%",
-                textTransform: "none",
-                color: "white",
-              }}
-              onClick={onDisconnectingWallet}
-            >
-              Disconnect Wallet
-            </Button>
+        ) : (
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="left"
+          >
+            <Grid item>
+              <Typography sx={{ mb: 2 }}>
+                Are you sure you want to disconnect your wallet?
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Button
+                color="inherit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  borderRadius: 2,
+                  background:
+                    "linear-gradient(74.61deg, #0D7E06 18.06%, #00BB89 125.98%);",
+                  mt: 1,
+                  fontWeight: "bold",
+                  width: "100%",
+                  textTransform: "none",
+                  color: "white",
+                }}
+                onClick={onDisconnectingWallet}
+              >
+                Disconnect Wallet
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      )}
+        )}
+      </DialogContent>
     </Dialog>
   );
 };
