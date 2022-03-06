@@ -1,44 +1,42 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState, useCallback, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import AlpsLogo from "./AlpsLogo";
-import { Drawer, Grid, Link } from "@mui/material";
+import Drawer from "@mui/material/Drawer";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import { Menu } from "@mui/icons-material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import Menu from "@mui/icons-material/Menu";
+import { useTheme } from "@mui/material/styles";
 import { useMoralis } from "react-moralis";
+import getEllipsisText from "../utils/getEllipsisText";
+import presaleMenu from "../constants/presaleMenu.json";
+import AlpsLogoGreen from "../assets/logo/Alps-Logo-Basic-1.svg";
+import AlpsLogoWhite from "../assets/logo/Alps-Logo-Basic-3.svg";
 
 const CustomAppBar: FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, authenticate, isAuthenticating, account, logout } =
+    useMoralis();
+  const theme = useTheme();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isYOffsetMoreThan100, setIsYOffsetMoreThan100] =
+    useState<boolean>(false);
 
-  const { isAuthenticated, authenticate, user, logout, Moralis } = useMoralis();
-  const [walletAddress, setWalletAddress] = useState("");
-  useEffect(() => {
-    if (isAuthenticated) {
-      const ethAddress = user?.get("ethAddress");
-      setWalletAddress(ethAddress.replace(ethAddress.substring(6, 38), "****"));
-    }
-  }, [isAuthenticated]);
-
-  const onLoginW = async () => {
-    //Change made here
-    const user = await authenticate({ provider: "walletconnect" });
-    console.log(user);
-  };
-
-  const onLoginM = async () => {
-    const user = await authenticate();
-    console.log(user);
-  };
-
-  const loginControl = (event: React.MouseEvent) => {
+  /**
+   * @name handleLogin
+   * @description Handle Connecting with Web3 Wallet (Metamask, WalletConnect, etc).
+   *
+   * @param event Mouse Event
+   */
+  const handleLogin = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     if (!isAuthenticated) {
-      onLoginW();
+      authenticate({ signingMessage: "Alps Finance Presale Authentication" });
     } else {
       logout();
     }
@@ -51,26 +49,21 @@ const CustomAppBar: FC = () => {
       return;
     }
 
-    setIsOpen(open);
-  };
-  const menus = [
-    {
-      name: "Home",
-      url: "",
-    },
-    {
-      name: "Litepaper",
-      url: "",
-    },
-    {
-      name: "Documentation",
-      url: "https://docs.alps.finance/",
-    },
-    {
-      name: "FAQs",
-      url: "",
-    },
-  ];
+      setIsOpen(open);
+    };
+
+  /**
+   * @name handleScroll
+   * @description Handle scrolling logic to give app bar box shadow
+   */
+  const handleScroll = useCallback(() => {
+    const position = window.pageYOffset;
+    // eslint-disable-next-line no-mixed-operators
+    if (position >= 100 !== isYOffsetMoreThan100) {
+      setIsYOffsetMoreThan100(position >= 100);
+    }
+  }, [isYOffsetMoreThan100]);
+
   const list = (anchor: String) => (
     <Box
       sx={{ width: 250 }}
@@ -79,7 +72,7 @@ const CustomAppBar: FC = () => {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {menus.map((menu, index) => (
+        {presaleMenu.map((menu, index) => (
           <ListItem button key={index}>
             <ListItemText
               primary={menu.name}
@@ -93,9 +86,10 @@ const CustomAppBar: FC = () => {
         ))}
       </List>
       <List>
-        <Button
+        <LoadingButton
           color="inherit"
           variant="contained"
+          loading={isAuthenticating}
           sx={{
             borderRadius: 30,
             color: "#0D7E06",
@@ -103,13 +97,23 @@ const CustomAppBar: FC = () => {
             ml: 1,
             fontWeight: "bold",
           }}
-          onClick={loginControl}
+          onClick={handleLogin}
         >
-          {isAuthenticated ? walletAddress : "Connect Wallet"}
-        </Button>
+          {isAuthenticated
+            ? getEllipsisText(account as string)
+            : "Connect Wallet"}
+        </LoadingButton>
       </List>
     </Box>
   );
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
 
   return (
     <AppBar
@@ -120,23 +124,34 @@ const CustomAppBar: FC = () => {
         pt: 1.5,
         pb: 1.5,
         pl: 3.5,
+        backgroundColor: isYOffsetMoreThan100 ? "white" : "transparent",
+        transition: "0.3s",
+        ...(isYOffsetMoreThan100 && {
+          boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+        }),
         "@media (min-width: 780px)": {
           pr: 3.5,
         },
-        color: "white",
       }}
     >
       <Toolbar>
         <Box sx={{ flexGrow: 1 }}>
-          <AlpsLogo />
+          <img
+            src={isYOffsetMoreThan100 ? AlpsLogoGreen : AlpsLogoWhite}
+            alt="Alps Logo"
+            width={30}
+            height="auto"
+          />
         </Box>
-        {menus
+        {presaleMenu
           .filter((menu) => menu.name !== "Home")
           .map((menu, index) => (
             <Link
               key={index}
+              color={
+                isYOffsetMoreThan100 ? theme.palette.secondary.light : "white"
+              }
               underline={"none"}
-              color={"white"}
               href={menu.url}
               sx={{
                 pr: 3,
@@ -149,24 +164,28 @@ const CustomAppBar: FC = () => {
               {menu.name}
             </Link>
           ))}
-        <Button
+        <LoadingButton
           color="inherit"
           variant="contained"
+          loading={isAuthenticating}
           sx={{
             borderRadius: 30,
             color: "#0D7E06",
-            background: "white",
+            backgroundColor: "white",
             ml: 1,
-            fontWeight: "bold",
             "@media (max-width: 780px)": {
               display: "none",
             },
             textTransform: "none",
           }}
-          onClick={loginControl}
+          onClick={handleLogin}
         >
-          {isAuthenticated ? walletAddress : "Connect Wallet"}
-        </Button>
+          <b>
+            {isAuthenticated
+              ? getEllipsisText(account as string)
+              : "Connect Wallet"}
+          </b>
+        </LoadingButton>
         <Grid
           container
           justifyContent="right"

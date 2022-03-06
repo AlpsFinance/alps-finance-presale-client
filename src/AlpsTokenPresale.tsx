@@ -1,60 +1,57 @@
 import { FC, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
-import { calculateTimeLeft } from "./utility/helper";
-import { useMoralis } from "react-moralis";
-import preSaleAbi from "@alpsfinance/core/build/contracts/Presale.json";
-import { CHAIN_SYMBOL, PRESALE_CONTRACT_ADDRESS } from "./constant";
-import { useApiContract } from "react-moralis";
+import Box from "@mui/material/Box";
+import { useTheme } from "@mui/system";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
+import { abi } from "@alpsfinance/core/build/contracts/Presale.json";
+import usePresaleChain from "./hooks/usePresaleChain";
+import presaleContractAddress from "./constants/presaleContractAddress.json";
+import { calculateTimeLeft } from "./utils/calculateTimeLeft";
 
-interface Props {
-  isLargeScreen: Boolean;
-}
-
-const AlpsTokenPresale: FC<Props> = (props) => {
+const AlpsTokenPresale: FC = (props) => {
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(Date.now()));
-  const [currentRound, setCurrentRound] = useState<number>(1);
-  const { isLargeScreen } = props;
   const { isAuthenticated } = useMoralis();
-  const getCurrentPresaleRoundFunction = useApiContract({
-    address: PRESALE_CONTRACT_ADDRESS,
-    functionName: "getCurrentPresaleRound",
-    chain: CHAIN_SYMBOL,
-    abi: preSaleAbi.abi,
-  });
-  const { data, runContractFunction } = useApiContract({
-    address: PRESALE_CONTRACT_ADDRESS,
-    functionName: "presaleDetailsMapping",
-    chain: CHAIN_SYMBOL,
-    abi: preSaleAbi.abi,
-    params: { "": (currentRound + 1).toString() },
-  });
-  useEffect(() => {
-    if (isAuthenticated)
-      if (currentRound < 2) runContractFunction();
-      else setTimeLeft(calculateTimeLeft(Date.now()));
-  }, [currentRound, isAuthenticated]);
+  const { presaleChain } = usePresaleChain();
 
-  async function Fetch() {
-    try {
-      const res = await getCurrentPresaleRoundFunction.runContractFunction();
-      setCurrentRound(Number(res));
-      // const nextRound = await getNextRoundFunction.runContractFunction();
-      // console.log(res, nextRound)
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  const { data: currentPresaleRound, fetch: getCurrentPresaleRound } =
+    useWeb3ExecuteFunction({
+      contractAddress: presaleContractAddress[presaleChain].presale,
+      functionName: "getCurrentPresaleRound",
+      abi,
+      params: {},
+    });
+
+  const { data: presaleDetailsData, fetch: getPresaleDetails } =
+    useWeb3ExecuteFunction({
+      contractAddress: presaleContractAddress[presaleChain].presale,
+      functionName: "presaleDetailsMapping",
+      abi,
+      // params: { "": (currentPresaleRound + 1).toString() },
+    });
+
+  // useEffect(() => {
+  //   if (isAuthenticated)
+  //     if (currentPresaleRound < 2) {
+  //       getPresaleDetails();
+  //     } else {
+  //       setTimeLeft(calculateTimeLeft(Date.now()));
+  //     }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentPresaleRound, isAuthenticated]);
 
   useEffect(() => {
-    if (isAuthenticated) Fetch();
+    // if (isAuthenticated) Fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   let timer: any;
   useEffect(() => {
-    if (data) {
-      const da: any = data;
+    if (presaleDetailsData) {
+      const da: any = presaleDetailsData;
       console.log(da);
       timer = setInterval(() => {
         const leftTime = calculateTimeLeft(1000 * Number(da.startingTime));
@@ -64,7 +61,7 @@ const AlpsTokenPresale: FC<Props> = (props) => {
           leftTime.minutes === 0 &&
           leftTime.seconds === 0
         ) {
-          Fetch();
+          // Fetch();
         }
         setTimeLeft(leftTime);
       }, 1000);
@@ -72,7 +69,7 @@ const AlpsTokenPresale: FC<Props> = (props) => {
       clearTimeout(timer);
     }
     return () => clearInterval(timer);
-  }, [data]);
+  }, [presaleDetailsData]);
 
   return (
     <Grid container justifyContent="center" alignItems="start">
@@ -91,7 +88,7 @@ const AlpsTokenPresale: FC<Props> = (props) => {
           }}
         >
           <Grid container justifyContent="center" alignItems="center" pt={1}>
-            TOKEN PRESALE ROUND {currentRound + 1} STARTS IN:
+            {/* TOKEN PRESALE ROUND {currentRound + 1} STARTS IN: */}
           </Grid>
 
           <Grid container spacing={isLargeScreen ? 2 : 0}>

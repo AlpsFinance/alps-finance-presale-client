@@ -1,22 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useTheme } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Box, Tooltip } from "@mui/material";
+import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import "./App.css";
-import AppBar from "./AppBar";
+import {
+  useMoralis,
+  useMoralisWeb3Api,
+  useMoralisWeb3ApiCall,
+} from "react-moralis";
+import AppBar from "./components/AppBar";
 import AlpsTokenPresale from "./AlpsTokenPresale";
-import Footer from "./Footer";
-import Timeline from "./timeline";
+import Footer from "./components/Footer";
+import Timeline from "./components/Timeline";
 import BuyContainer from "./BuyContainer";
-import WrongNetworkModal from "./WrongNetworkModal";
+import WrongNetworkModal from "./components/WrongNetworkModal";
+import usePresaleChain from "./hooks/usePresaleChain";
+import presaleContractAddress from "./constants/presaleContractAddress.json";
+import getEllipsisText from "./utils/getEllipsisText";
 
 export default function App() {
   const theme = useTheme();
+  const { enableWeb3, isAuthenticated, isInitialized, isWeb3Enabled } =
+    useMoralis();
+  const { presaleChain } = usePresaleChain();
+  const Web3Api = useMoralisWeb3Api();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<boolean>(false);
+
+  const {
+    fetch: fetchTokenMetadata,
+    data: tokenMetadata,
+    isLoading: isTokenMetadataLoading,
+  } = useMoralisWeb3ApiCall(Web3Api.token.getTokenMetadata, {
+    chain: presaleChain,
+    addresses: [presaleContractAddress[presaleChain]?.token],
+  });
+
+  useEffect(() => {
+    if (isInitialized && isAuthenticated && !isWeb3Enabled) {
+      enableWeb3();
+    }
+  }, [isInitialized, isAuthenticated, isWeb3Enabled, enableWeb3]);
+
+  useEffect(() => {
+    if (isInitialized) {
+      fetchTokenMetadata();
+    }
+  }, [isInitialized, fetchTokenMetadata]);
 
   return (
     <Box>
@@ -57,7 +90,7 @@ export default function App() {
                 </Typography>
               </Grid>
             </Grid>
-            <AlpsTokenPresale isLargeScreen={isLargeScreen} />
+            <AlpsTokenPresale />
             <Grid item sm={12} md={12}>
               <Grid
                 container
@@ -82,29 +115,50 @@ export default function App() {
             </Grid>
           </Grid>
           <BuyContainer isLargeScreen={isLargeScreen} />
-          <Grid item lg={4} textAlign="left" px={isLargeScreen ? 5 : 0}>
+          <Grid
+            item
+            lg={7}
+            textAlign="center"
+            justifyContent="center"
+            alignItems="center"
+            px={isLargeScreen ? 5 : 0}
+          >
             <Typography variant="h5" sx={{ mb: 2 }}>
               Token Info
             </Typography>
-            <Grid container direction="row" alignItems="center" spacing={1}>
-              <Grid item lg={6} sm={7}>
-                <Typography sx={{ display: "inline" }}>Symbol: </Typography>
-                <Typography fontWeight={600} sx={{ display: "inline" }}>
-                  ALPS
-                </Typography>
+            {tokenMetadata && !isTokenMetadataLoading && (
+              <Grid
+                container
+                direction="row"
+                alignItems="center"
+                justifyContent="space-around"
+                spacing={1}
+              >
+                <Grid item>
+                  <Typography sx={{ display: "inline" }}>Name: </Typography>
+                  <Typography fontWeight={600} sx={{ display: "inline" }}>
+                    {tokenMetadata[0]?.name}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography sx={{ display: "inline" }}>Symbol: </Typography>
+                  <Typography fontWeight={600} sx={{ display: "inline" }}>
+                    {tokenMetadata[0]?.symbol}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography sx={{ display: "inline" }}>Decimal:</Typography>
+                  <Typography fontWeight={600} sx={{ display: "inline" }}>
+                    {tokenMetadata[0]?.decimals}
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item lg={4} sm={5}>
-                <Typography sx={{ display: "inline" }}>Decimal:</Typography>
-                <Typography fontWeight={600} sx={{ display: "inline" }}>
-                  18
-                </Typography>
-              </Grid>
-            </Grid>
+            )}
             <Grid container direction="row" alignItems="center" spacing={1}>
               <Grid item lg={12}>
                 <Typography sx={{ display: "inline" }}>Contract: </Typography>
                 <Typography fontWeight={600} sx={{ display: "inline", mr: 1 }}>
-                  0x064c***CbCce31
+                  {getEllipsisText(presaleContractAddress[presaleChain].token)}
                 </Typography>
 
                 <CopyToClipboard
@@ -123,8 +177,8 @@ export default function App() {
             </Grid>
           </Grid>
         </Grid>
+        <Timeline />
       </Box>
-      <Timeline />
       <Footer />
       <WrongNetworkModal />
     </Box>

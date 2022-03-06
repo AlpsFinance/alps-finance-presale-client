@@ -5,10 +5,11 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { Box } from "@mui/material";
-import preSaleAbi from "@alpsfinance/core/build/contracts/Presale.json";
-import { useApiContract, useMoralis } from "react-moralis";
-import { CHAIN_SYMBOL, PRESALE_CONTRACT_ADDRESS } from "../constant";
-import { regularNumber } from "../utility/helper";
+import { abi } from "@alpsfinance/core/build/contracts/Presale.json";
+import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
+import presaleContractAddress from "../../constants/presaleContractAddress.json";
+import formatNumber from "../../utils/formatNumber";
+import usePresaleChain from "../../hooks/usePresaleChain";
 
 function LinearProgressWithLabel(
   props: LinearProgressProps & { value: number }
@@ -56,58 +57,31 @@ export const TimelineItem: FC<TimeLineData> = ({
 }) => {
   const [progress, setProgress] = useState<number>(-1);
   const { isAuthenticated, Moralis } = useMoralis();
+  const { presaleChain } = usePresaleChain();
 
-  const { data, runContractFunction } = useApiContract({
-    address: PRESALE_CONTRACT_ADDRESS,
+  const { data, fetch } = useWeb3ExecuteFunction({
+    contractAddress: presaleContractAddress[presaleChain].presale,
     functionName: "getPresaleAmountByRound",
-    chain: CHAIN_SYMBOL,
-    abi: preSaleAbi.abi,
+    abi,
     params: { _presaleRound: round.toString() },
   });
 
   useEffect(() => {
     if (isAuthenticated) {
-      runContractFunction();
+      fetch();
     }
   }, [isAuthenticated]);
 
   useEffect(() => {
     if (data) {
-      setProgress(Number(Moralis.Units.FromWei(data)));
+      setProgress(Number(Moralis.Units.FromWei(data as string)));
     }
   }, [data]);
-  // const { isWeb3Enabled, enableWeb3 } = useMoralis();
-  // const { fetch } = useWeb3ExecuteFunction();
-  // const [progress, setProgress] = useState(-1);
-
-  // useEffect(() => {
-  //   console.log(isWeb3Enabled, progress)
-  //   if (!isWeb3Enabled) {
-  //     enableWeb3();
-  //   }
-  //   if (isWeb3Enabled && progress === -1) {
-  //     fetch({
-  //       params: {
-  //         abi: preSaleAbi.abi,
-  //         functionName: "getPresaleAmountByRound",
-  //         contractAddress: PRESALE_CONTRACT_ADDRESS,
-  //         params: {"_presaleRound":0}
-  //       },
-  //       onError: (e: any) => {
-  //         console.log(e);
-  //       },
-  //       onSuccess: (result: any) => {
-  //         console.log('#######', result)
-  //         setProgress(result);
-  //       },
-  //     });
-  //   }
-  // }, [isWeb3Enabled]);
 
   return (
     <>
       <Typography fontWeight={600}>{title}</Typography>
-      <Typography>Amount: {regularNumber(amount)}</Typography>
+      <Typography>Amount: {formatNumber(amount)}</Typography>
       <Typography>Unit: {unit}</Typography>
       <LinearProgressWithLabel value={progress / amount} />
     </>
