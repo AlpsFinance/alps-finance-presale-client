@@ -70,13 +70,13 @@ export const TimelineItem: FC<TimeLineData> = ({
     if (isAuthenticated) {
       fetch();
     }
-  }, [isAuthenticated]);
+  }, [fetch, isAuthenticated]);
 
   useEffect(() => {
     if (data) {
       setProgress(Number(Moralis.Units.FromWei(data as string)));
     }
-  }, [data]);
+  }, [Moralis.Units, data]);
 
   return (
     <>
