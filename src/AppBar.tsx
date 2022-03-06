@@ -24,11 +24,21 @@ const CustomAppBar: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
+  const onLoginW = async () => {
+    const user = await authenticate({ provider: "walletconnect" });
+    console.log(user);
+  };
+
+  const onLoginM = async () => {
+    const user = await authenticate();
+    console.log(user);
+  };
+
   const loginControl = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     if (!isAuthenticated) {
-      authenticate();
+      onLoginM();
     } else {
       logout();
     }
