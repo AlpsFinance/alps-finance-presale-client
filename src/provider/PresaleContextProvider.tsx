@@ -62,15 +62,16 @@ const PresaleContextProvider: FC = (props) => {
     if (isInitialized) {
       getCurrentPresaleRound({
         onSuccess: () => {
-          let presaleMappingArray: PresaleDataStateWithRound[] = [];
           getTotalPresaleRound({
-            onSuccess: (totalRound) => {
+            onSuccess: async (totalRound) => {
+              let presaleMappingArray: PresaleDataStateWithRound[] = [];
+
               for (
                 let presaleRound = 0;
                 presaleRound < parseInt(totalRound as string);
                 presaleRound++
               ) {
-                getPresaleDetails({
+                await getPresaleDetails({
                   params: {
                     address: presaleContractAddress[presaleChain].presale,
                     function_name: "presaleDetailsMapping",
@@ -102,8 +103,7 @@ const PresaleContextProvider: FC = (props) => {
                   },
                 });
               }
-            },
-            onComplete: () => {
+
               setPresaleDataMapping(presaleMappingArray);
             },
           });

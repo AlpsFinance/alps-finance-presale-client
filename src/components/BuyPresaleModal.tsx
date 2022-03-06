@@ -27,7 +27,7 @@ interface BuyPresaleModalProps {
   handleClose: () => void;
   paymentTokenAddress: string;
   paymentTokenAmount: string;
-  estimatedAlpsPrice: string;
+  estimatedAlpsReceived: string;
 }
 
 const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
@@ -36,7 +36,7 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
     handleClose,
     paymentTokenAddress,
     paymentTokenAmount,
-    estimatedAlpsPrice,
+    estimatedAlpsReceived,
   } = props;
   const { presaleChain } = usePresaleChain();
   const { Moralis, account, isInitialized } = useMoralis();
@@ -283,7 +283,7 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
               </Grid>
               <Grid item>
                 <b>Estimated Alps Token Received:</b>{" "}
-                {parseFloat(estimatedAlpsPrice).toFixed(2)}
+                {parseFloat(estimatedAlpsReceived).toFixed(2)}
               </Grid>
             </Grid>
           </>
@@ -363,8 +363,8 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
               <Grid item>
                 <Typography textAlign="center">
                   Click the <b>Confirm</b> button the purchase of{" "}
-                  {parseFloat(estimatedAlpsPrice).toFixed(2)} $ALPS token with{" "}
-                  {paymentTokenAmount}{" "}
+                  {parseFloat(estimatedAlpsReceived).toFixed(2)} $ALPS token
+                  with {paymentTokenAmount}{" "}
                   {
                     presalePaymentToken[presaleChain].find(
                       (p) => p?.address === paymentTokenAddress
@@ -388,8 +388,8 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
               <Grid item>
                 <Typography textAlign="center">
                   Click the <b>Confirm</b> button the purchase of{" "}
-                  {parseFloat(estimatedAlpsPrice).toFixed(2)} $ALPS token with{" "}
-                  {paymentTokenAmount}{" "}
+                  {parseFloat(estimatedAlpsReceived).toFixed(2)} $ALPS token
+                  with {paymentTokenAmount}{" "}
                   {
                     presalePaymentToken[presaleChain].find(
                       (p) => p?.address === paymentTokenAddress
@@ -420,8 +420,8 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
               </Grid>
               <Grid item>
                 <Typography textAlign="center" variant="h5">
-                  You just purchased {parseFloat(estimatedAlpsPrice).toFixed(2)}{" "}
-                  $ALPS!!!
+                  You just purchased{" "}
+                  {parseFloat(estimatedAlpsReceived).toFixed(2)} $ALPS!!!
                 </Typography>
               </Grid>
             </Grid>
@@ -447,8 +447,8 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
             </Grid>
             <Grid item>
               <Typography textAlign="center" variant="h5">
-                You just purchased {parseFloat(estimatedAlpsPrice).toFixed(2)}{" "}
-                $ALPS!!!
+                You just purchased{" "}
+                {parseFloat(estimatedAlpsReceived).toFixed(2)} $ALPS!!!
               </Typography>
             </Grid>
           </Grid>

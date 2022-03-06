@@ -1,4 +1,4 @@
-import React from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import { MoralisProvider } from "react-moralis";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -30,7 +30,7 @@ const theme = createTheme({
 });
 
 ReactDOM.render(
-  <React.StrictMode>
+  <StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <MoralisProvider
@@ -44,7 +44,7 @@ ReactDOM.render(
         </SnackbarProvider>
       </MoralisProvider>
     </ThemeProvider>
-  </React.StrictMode>,
+  </StrictMode>,
   document.getElementById("root")
 );
 

@@ -1,29 +1,10 @@
+import { FC } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { TimelineItem, TimeLineData } from "./TimelineItem";
+import presaleTimelines from "../../constants/presaleTimeline.json";
 
-const Timeline: React.FC = () => {
-  const timelines: TimeLineData[] = [
-    {
-      round: 0,
-      title: "PRESALE A (7 Mar 2022 - 13 Mar 2022)",
-      amount: 50000000,
-      unit: "$0.025",
-    },
-    {
-      round: 1,
-      title: "PRESALE B (14 Mar 2022 - 20 Mar 2022)",
-      amount: 100000000,
-      unit: "$0.050",
-    },
-    {
-      round: 2,
-      title: "PRESALE C (21 Mar 2022 - 27 Mar 2022)",
-      amount: 100000000,
-      unit: "$0.075",
-    },
-  ];
-
+const Timeline: FC = () => {
   return (
     <Grid
       container
@@ -49,7 +30,7 @@ const Timeline: React.FC = () => {
         <Typography variant="h5" sx={{ mb: 2 }}>
           TIMELINE ALPS
         </Typography>
-        {timelines.map((timeline: TimeLineData, index: number) => (
+        {presaleTimelines.map((timeline: TimeLineData, index: number) => (
           <TimelineItem {...timeline} key={`timeline-${index}`} />
         ))}
         {/* Comment this out until litepaper comes out */}

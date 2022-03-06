@@ -1,4 +1,4 @@
-import React, {
+import {
   FC,
   useState,
   useCallback,
@@ -38,8 +38,8 @@ const CustomAppBar: FC = () => {
     (_: String, open: boolean) => (event: KeyboardEvent | MouseEvent) => {
       if (
         event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
+        ((event as KeyboardEvent).key === "Tab" ||
+          (event as KeyboardEvent).key === "Shift")
       ) {
         return;
       }

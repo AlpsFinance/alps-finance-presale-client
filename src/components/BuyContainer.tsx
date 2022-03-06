@@ -114,30 +114,38 @@ const BuyContainer: FC = (props) => {
       isLatestRoundDataLoading,
     ]
   );
-  const estimatedAlpsPrice = useMemo(
+
+  const paymentTokenUSDValue = useMemo(
     () =>
       isLoading
         ? 0 // to avoid having not updated decimals and latestRoundData calculated together
-        : (parseFloat(
+        : parseFloat(
             Moralis.Units.FromWei(
               (latestRoundData as any)?.answer ?? "0",
               parseInt(decimals ?? "18")
             )
           ) *
-            parseFloat(
-              paymentTokenInfo.tokenAmount !== ""
-                ? paymentTokenInfo.tokenAmount
-                : "0"
-            )) /
-          parseFloat(Moralis.Units.FromWei(currentPresale?.usdPrice ?? 1)),
+          parseFloat(
+            paymentTokenInfo.tokenAmount !== ""
+              ? paymentTokenInfo.tokenAmount
+              : "0"
+          ),
     [
       Moralis.Units,
-      currentPresale?.usdPrice,
       decimals,
       isLoading,
       latestRoundData,
       paymentTokenInfo.tokenAmount,
     ]
+  );
+
+  const estimatedAlpsReceived = useMemo(
+    () =>
+      isLoading
+        ? 0 // to avoid having not updated decimals and latestRoundData calculated together
+        : paymentTokenUSDValue /
+          parseFloat(Moralis.Units.FromWei(currentPresale?.usdPrice ?? 1)),
+    [Moralis.Units, currentPresale?.usdPrice, isLoading, paymentTokenUSDValue]
   );
 
   useEffect(() => {
@@ -266,7 +274,7 @@ const BuyContainer: FC = (props) => {
                 {isLoading ? (
                   <CircularProgress size={15} sx={{ ml: 2 }} />
                 ) : (
-                  `${estimatedAlpsPrice.toFixed(2)} $ALPS`
+                  `${estimatedAlpsReceived.toFixed(2)} $ALPS`
                 )}{" "}
               </i>
             </Typography>
@@ -285,12 +293,31 @@ const BuyContainer: FC = (props) => {
               }}
               onClick={() => {
                 // Check whether the amount of token wanted to buy is 0 or not
-                if (estimatedAlpsPrice > 0) {
-                  setOpen(true);
-                } else {
-                  enqueueSnackbar("Input the amount bigger than 0!", {
+                if (estimatedAlpsReceived <= 0) {
+                  enqueueSnackbar("Input the amount should be larger than 0!", {
                     variant: "warning",
                   });
+                }
+                // Check whether the minimum amount of purchase is fulfilled
+                else if (
+                  currentPresale?.minimumUSDPurchase &&
+                  paymentTokenUSDValue <
+                    parseFloat(
+                      Moralis.Units.FromWei(
+                        (currentPresale?.minimumUSDPurchase ?? 0).toString()
+                      )
+                    )
+                ) {
+                  enqueueSnackbar(
+                    `Amount of purchase cannot be less than the minimum of $${Moralis.Units.FromWei(
+                      (currentPresale?.minimumUSDPurchase ?? 0).toString()
+                    )}!`,
+                    {
+                      variant: "warning",
+                    }
+                  );
+                } else {
+                  setOpen(true);
                 }
               }}
             >
@@ -304,7 +331,7 @@ const BuyContainer: FC = (props) => {
         handleClose={() => setOpen(false)}
         paymentTokenAddress={paymentTokenInfo.tokenAddress}
         paymentTokenAmount={paymentTokenInfo.tokenAmount}
-        estimatedAlpsPrice={estimatedAlpsPrice.toString()}
+        estimatedAlpsReceived={estimatedAlpsReceived.toString()}
       />
     </>
   );

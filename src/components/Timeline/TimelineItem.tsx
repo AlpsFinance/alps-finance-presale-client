@@ -6,10 +6,11 @@ import LinearProgress, {
 } from "@mui/material/LinearProgress";
 import { Box } from "@mui/material";
 import { abi } from "@alpsfinance/core/build/contracts/Presale.json";
-import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
+import { useApiContract, useMoralis } from "react-moralis";
 import presaleContractAddress from "../../constants/presaleContractAddress.json";
 import formatNumber from "../../utils/formatNumber";
 import usePresaleChain from "../../hooks/usePresaleChain";
+import usePresale from "../../hooks/usePresale";
 
 function LinearProgressWithLabel(
   props: LinearProgressProps & { value: number }
@@ -45,32 +46,28 @@ function LinearProgressWithLabel(
 export type TimeLineData = {
   round: number;
   title: string;
-  amount: number;
-  unit: string;
 };
 
-export const TimelineItem: FC<TimeLineData> = ({
-  round,
-  title,
-  amount,
-  unit,
-}) => {
+export const TimelineItem: FC<TimeLineData> = ({ round, title }) => {
   const [progress, setProgress] = useState<number>(-1);
   const { isAuthenticated, Moralis } = useMoralis();
   const { presaleChain } = usePresaleChain();
+  const { presaleDataMapping } = usePresale();
+  const presaleByRound = presaleDataMapping.find((p) => p.round === round);
 
-  const { data, fetch } = useWeb3ExecuteFunction({
-    contractAddress: presaleContractAddress[presaleChain].presale,
+  const { data, runContractFunction } = useApiContract({
+    address: presaleContractAddress[presaleChain].presale,
     functionName: "getPresaleAmountByRound",
+    chain: presaleChain,
     abi,
     params: { _presaleRound: round.toString() },
   });
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetch();
+      runContractFunction();
     }
-  }, [fetch, isAuthenticated]);
+  }, [isAuthenticated, runContractFunction]);
 
   useEffect(() => {
     if (data) {
@@ -81,9 +78,16 @@ export const TimelineItem: FC<TimeLineData> = ({
   return (
     <>
       <Typography fontWeight={600}>{title}</Typography>
-      <Typography>Amount: {formatNumber(amount)}</Typography>
-      <Typography>Unit: {unit}</Typography>
-      <LinearProgressWithLabel value={progress / amount} />
+      <Typography>
+        Amount:{" "}
+        {formatNumber((presaleByRound?.maximumPresaleAmount ?? 0) / 1e18)}
+      </Typography>
+      <Typography>
+        Unit: $ {Moralis.Units.FromWei(presaleByRound?.usdPrice ?? 0)}
+      </Typography>
+      <LinearProgressWithLabel
+        value={(progress / (presaleByRound?.maximumPresaleAmount ?? 1)) * 1e18}
+      />
     </>
   );
 };
