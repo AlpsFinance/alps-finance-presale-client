@@ -1,13 +1,32 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { MoralisProvider } from "react-moralis";
-import "./index.css";
-import { ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { red } from "@mui/material/colors";
 import CssBaseline from "@mui/material/CssBaseline";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
-import theme from "./theme";
+import PresaleContextProvider from "./provider/PresaleContextProvider";
+
+// Create a theme instance.
+const theme = createTheme({
+  typography: {
+    fontFamily: '"Noto Sans", sans-serif',
+    // fontWeightMedium: 600
+  },
+  palette: {
+    primary: {
+      main: "#00bb89",
+    },
+    secondary: {
+      main: "#0d7e06",
+    },
+    error: {
+      main: red.A400,
+    },
+  },
+});
 
 ReactDOM.render(
   <React.StrictMode>
@@ -17,7 +36,9 @@ ReactDOM.render(
         appId={process.env.REACT_APP_MORALIS_APP_ID ?? ""}
         serverUrl={process.env.REACT_APP_MORALIS_SERVER_URL ?? ""}
       >
-        <App />
+        <PresaleContextProvider>
+          <App />
+        </PresaleContextProvider>
       </MoralisProvider>
     </ThemeProvider>
   </React.StrictMode>,

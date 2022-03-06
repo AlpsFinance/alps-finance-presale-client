@@ -1,7 +1,6 @@
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Box, Button } from "@mui/material";
-import { TimelineItem, TimeLineData } from "./TimeItem";
+import { TimelineItem, TimeLineData } from "./TimelineItem";
 
 const Timeline: React.FC = () => {
   const timelines: TimeLineData[] = [
@@ -36,11 +35,15 @@ const Timeline: React.FC = () => {
       <Grid
         item
         lg={5}
+        md={7}
+        xs={11}
         sx={{
           boxShadow: "0px 3px 11px 4px rgba(18, 209, 6, 0.25)",
           borderRadius: 3,
           pt: 2,
           px: 2,
+          backgroundColor: "white",
+          width: "100%",
         }}
       >
         <Typography variant="h5" sx={{ mb: 2 }}>
@@ -49,25 +52,7 @@ const Timeline: React.FC = () => {
         {timelines.map((timeline: TimeLineData, index: number) => (
           <TimelineItem {...timeline} key={`timeline-${index}`} />
         ))}
-        {/* <Typography fontWeight={600}>
-          PRESALE A (18 Feb 2022 - 17 Mar 2022)
-        </Typography>
-        <Typography>Amount: 50,000,000</Typography>
-        <Typography>Unit: $0.000125</Typography>
-        <LinearProgressWithLabel value={progress} />
-        <Typography fontWeight={600}>
-          PRESALE B (18 Mar 2022 - 17 Apr 2022)
-        </Typography>
-        <Typography>Amount: 100,000,000</Typography>
-        <Typography>Unit: $0.000250</Typography>
-        <LinearProgressWithLabel value={progress} />
-        <Typography fontWeight={600}>
-          PRESALE C (18 Apr 2022 - 17 May 2022)
-        </Typography>
-        <Typography>Amount: 100,000,000</Typography>
-        <Typography>Unit: $0.00050</Typography>
-        <LinearProgressWithLabel value={progress} /> */}
-        <Box textAlign="center">
+        {/* <Box textAlign="center">
           <Button
             color="inherit"
             variant="contained"
@@ -84,7 +69,7 @@ const Timeline: React.FC = () => {
           >
             Read Litepaper
           </Button>
-        </Box>
+        </Box> */}
       </Grid>
     </Grid>
   );

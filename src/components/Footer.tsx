@@ -18,7 +18,6 @@ interface SocialMediaObject {
     | (OverridableComponent<SvgIconTypeMap<{}, "svg">> & {
         muiName: string;
       });
-  color: string;
   link: string;
 }
 
@@ -26,42 +25,38 @@ const SocialMediaArray: SocialMediaObject[] = [
   {
     name: "reddit",
     icon: RedditIcon,
-    color: "#FF4500",
     link: "https://www.reddit.com/u/alpsfinance/",
   },
   {
     name: "instagram",
     icon: FaInstagram,
-    color: "#C13584",
     link: "https://instagram.com/alpsfinance",
   },
   {
     name: "twitter",
     icon: TwitterIcon,
-    color: "#00acee",
     link: "https://twitter.com/alpsfinance",
   },
   {
     name: "telegram",
     icon: TelegramIcon,
-    color: "#0088CC",
     link: "https://t.me/AlpsFinance",
   },
   {
     name: "github",
     icon: GitHubIcon,
-    color: "#333",
     link: "https://github.com/AlpsFinance",
   },
   {
     name: "medium",
     icon: FaMedium,
-    color: "black",
     link: "https://alpsfinance.medium.com",
   },
 ];
 
 const Footer: FC = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <Grid
       container
@@ -87,13 +82,13 @@ const Footer: FC = () => {
         <Grid item>
           <Grid container justifyContent="center" alignItems="center">
             {SocialMediaArray.map((socialMedia: SocialMediaObject) => {
-              const { name, icon: Icon, color, link } = socialMedia;
+              const { name, icon: Icon, link } = socialMedia;
               return (
                 <Grid item key={name}>
                   <IconButton
                     aria-label={name}
                     sx={{
-                      "&:hover": { color },
+                      "&:hover": { color: "#c7c9c8" },
                       transition: "0.3s",
                       color: "white",
                     }}
@@ -116,7 +111,9 @@ const Footer: FC = () => {
           sx={{ mt: 1 }}
         >
           <Grid item>
-            <Typography variant="body2">&copy; 2021 Alps Labs</Typography>
+            <Typography variant="body2">
+              &copy; {currentYear} Alps Labs
+            </Typography>
           </Grid>
         </Grid>
       </Grid>
