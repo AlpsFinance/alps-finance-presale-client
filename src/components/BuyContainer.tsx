@@ -12,10 +12,10 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { useTheme } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useWeb3ExecuteFunction, useMoralis } from "react-moralis";
-import presalePaymentToken from "./constants/presalePaymentToken.json";
-import usePresaleChain from "./hooks/usePresaleChain";
-import NULL_ADDRESS from "./utils/nullAddress";
-import usePresale from "./hooks/usePresale";
+import presalePaymentToken from "../constants/presalePaymentToken.json";
+import usePresaleChain from "../hooks/usePresaleChain";
+import NULL_ADDRESS from "../utils/nullAddress";
+import usePresale from "../hooks/usePresale";
 
 const BuyContainer: FC = (props) => {
   const theme = useTheme();

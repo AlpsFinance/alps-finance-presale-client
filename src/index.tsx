@@ -4,6 +4,7 @@ import { MoralisProvider } from "react-moralis";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 import CssBaseline from "@mui/material/CssBaseline";
+import { SnackbarProvider } from "notistack";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
@@ -36,9 +37,11 @@ ReactDOM.render(
         appId={process.env.REACT_APP_MORALIS_APP_ID ?? ""}
         serverUrl={process.env.REACT_APP_MORALIS_SERVER_URL ?? ""}
       >
-        <PresaleContextProvider>
-          <App />
-        </PresaleContextProvider>
+        <SnackbarProvider maxSnack={3}>
+          <PresaleContextProvider>
+            <App />
+          </PresaleContextProvider>
+        </SnackbarProvider>
       </MoralisProvider>
     </ThemeProvider>
   </React.StrictMode>,

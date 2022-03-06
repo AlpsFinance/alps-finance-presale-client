@@ -12,10 +12,10 @@ import {
   useMoralisWeb3ApiCall,
 } from "react-moralis";
 import AppBar from "./components/AppBar";
-import AlpsTokenPresale from "./AlpsTokenPresale";
+import AlpsTokenPresale from "./components/AlpsTokenPresale";
 import Footer from "./components/Footer";
 import Timeline from "./components/Timeline";
-import BuyContainer from "./BuyContainer";
+import BuyContainer from "./components/BuyContainer";
 import WrongNetworkModal from "./components/WrongNetworkModal";
 import usePresaleChain from "./hooks/usePresaleChain";
 import presaleContractAddress from "./constants/presaleContractAddress.json";

@@ -5,8 +5,8 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useMoralis } from "react-moralis";
-import usePresale from "./hooks/usePresale";
-import { calculateTimeLeft } from "./utils/calculateTimeLeft";
+import usePresale from "../hooks/usePresale";
+import { calculateTimeLeft } from "../utils/calculateTimeLeft";
 
 interface TimeType {
   days: number;
