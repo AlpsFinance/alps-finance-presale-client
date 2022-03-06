@@ -4,34 +4,26 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
-import { abi } from "@alpsfinance/core/build/contracts/Presale.json";
-import usePresaleChain from "./hooks/usePresaleChain";
-import presaleContractAddress from "./constants/presaleContractAddress.json";
+import { useMoralis } from "react-moralis";
+import usePresale from "./hooks/usePresale";
 import { calculateTimeLeft } from "./utils/calculateTimeLeft";
+
+interface TimeType {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
 
 const AlpsTokenPresale: FC = (props) => {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(Date.now()));
   const { isAuthenticated } = useMoralis();
-  const { presaleChain } = usePresaleChain();
-
-  const { data: currentPresaleRound, fetch: getCurrentPresaleRound } =
-    useWeb3ExecuteFunction({
-      contractAddress: presaleContractAddress[presaleChain].presale,
-      functionName: "getCurrentPresaleRound",
-      abi,
-      params: {},
-    });
-
-  const { data: presaleDetailsData, fetch: getPresaleDetails } =
-    useWeb3ExecuteFunction({
-      contractAddress: presaleContractAddress[presaleChain].presale,
-      functionName: "presaleDetailsMapping",
-      abi,
-      // params: { "": (currentPresaleRound + 1).toString() },
-    });
+  const { currentPresaleRound, totalPresaleRound, presaleDataMapping } =
+    usePresale();
+  const [timeLeft, setTimeLeft] = useState<TimeType>(
+    calculateTimeLeft(Date.now())
+  );
 
   // useEffect(() => {
   //   if (isAuthenticated)
@@ -50,27 +42,33 @@ const AlpsTokenPresale: FC = (props) => {
 
   let timer: any;
   useEffect(() => {
-    if (presaleDetailsData) {
+    if (presaleDataMapping) {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       timer = setInterval(() => {
-        const leftTime = calculateTimeLeft(
-          1000 * Number((presaleDetailsData as any)?.startingTime)
-        );
-        if (
-          leftTime.days === 0 &&
-          leftTime.hours === 0 &&
-          leftTime.minutes === 0 &&
-          leftTime.seconds === 0
-        ) {
-          // Fetch();
+        const nextPresale = presaleDataMapping.find((d) => {
+          return (
+            d.round === Math.min(currentPresaleRound + 1, totalPresaleRound - 1)
+          );
+        });
+        if (nextPresale) {
+          const leftTime = calculateTimeLeft(
+            1000 * Number(nextPresale?.startingTime)
+          );
+          setTimeLeft(leftTime);
+        } else {
+          setTimeLeft({
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+          });
         }
-        setTimeLeft(leftTime);
       }, 1000);
     } else {
       clearTimeout(timer);
     }
     return () => clearInterval(timer);
-  }, [presaleDetailsData]);
+  }, [presaleDataMapping]);
 
   return (
     <Grid container justifyContent="center" alignItems="start">
@@ -89,7 +87,9 @@ const AlpsTokenPresale: FC = (props) => {
           }}
         >
           <Grid container justifyContent="center" alignItems="center" pt={1}>
-            {/* TOKEN PRESALE ROUND {currentRound + 1} STARTS IN: */}
+            TOKEN PRESALE ROUND{" "}
+            {Math.min(currentPresaleRound + 1, totalPresaleRound - 1) || 1}{" "}
+            STARTS IN:
           </Grid>
 
           <Grid container spacing={isLargeScreen ? 2 : 0}>

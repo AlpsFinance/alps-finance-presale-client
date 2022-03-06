@@ -1,5 +1,4 @@
-import { ChangeEvent, FormEvent, useState, FC } from "react";
-import _ from "lodash";
+import { ChangeEvent, /*FormEvent*/ useState, FC } from "react";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
@@ -10,101 +9,43 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Grid from "@mui/material/Grid";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { useWeb3ExecuteFunction } from "react-moralis";
-// import chainlinkFeedAbi from "./abi/chainlinkePriceFeed.json";
-// import BigNumber from "bignumber.js";
-// import presaleContractAddress from "./constants/presaleContractAddress.json";
+import { useTheme } from "@mui/system";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useWeb3ExecuteFunction, useMoralis } from "react-moralis";
 import presalePaymentToken from "./constants/presalePaymentToken.json";
 import usePresaleChain from "./hooks/usePresaleChain";
 import NULL_ADDRESS from "./utils/nullAddress";
+import usePresale from "./hooks/usePresale";
 
-interface props {
-  isLargeScreen: Boolean;
-}
-
-// type CurrencyData = {
-//   value: string;
-//   label: string;
-//   address: string;
-//   aggregatorAddress: string;
-// };
-
-const BuyContainer: FC<props> = (props: props) => {
-  const { isLargeScreen } = props;
-  // const { enableWeb3, isWeb3Enabled } = useMoralis();
+const BuyContainer: FC = (props) => {
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const { isLoading } = useWeb3ExecuteFunction();
+  const { Moralis } = useMoralis();
   const { presaleChain } = usePresaleChain();
-  const [tokenAddress, setTokenAddress] = useState<string>(NULL_ADDRESS);
-  const [tokenAmount, setTokenAmount] = useState<string>("0");
-  const [price] = useState("1");
+  const { currentPresaleRound, presaleDataMapping } = usePresale();
+  const [paymentTokenInfo, setPaymentTokenInfo] = useState({
+    tokenAddress: NULL_ADDRESS,
+    tokenAmount: "0",
+  });
   const [isCalculating] = useState(false);
 
-  const changeToken = (event: SelectChangeEvent<string>): void => {
-    setTokenAddress(event.target.value);
+  const handleTokenAddressChange = (event: SelectChangeEvent<string>): void => {
+    setPaymentTokenInfo({
+      ...paymentTokenInfo,
+      tokenAddress: event.target.value,
+    });
   };
-  const changeAmount = (
+  const handleTokenAmountChange = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ): void => {
-    setTokenAmount(event.target.value);
+    if (event.target.value === "" || parseFloat(event.target.value)) {
+      setPaymentTokenInfo({
+        ...paymentTokenInfo,
+        tokenAmount: event.target.value,
+      });
+    }
   };
-
-  const submitHandler = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // const ethAddress = user?.get("ethAddress");
-    // if (token.address === "0x0000000000000000000000000000000000000000") {
-    //   const res = await toPresaleContract()
-    //     .methods.presaleTokens(token.address, Moralis.Units.ETH(amount))
-    //     .send({
-    //       from: ethAddress,
-    //       value: Moralis.Units.ETH(amount),
-    //     });
-    // } else {
-    //   const tokenContract = toTokenContract(token.address);
-    //   const approve = await tokenContract.methods
-    //     .allowance(ethAddress, PRESALE_CONTRACT_ADDRESS)
-    //     .call();
-    //   if (approve < Moralis.Units.ETH(amount)) {
-    //     await tokenContract.methods
-    //       .approve(PRESALE_CONTRACT_ADDRESS, Moralis.Units.ETH(amount))
-    //       .send({ from: ethAddress });
-    //   }
-    //   const res = await toPresaleContract()
-    //     .methods.presaleTokens(token.address, Moralis.Units.ETH(amount))
-    //     .send({ from: ethAddress });
-    // }
-  };
-
-  // useEffect(() => {
-  // if (isWeb3Enabled) {
-  //     setIsCalculating(true);
-  //     getPriceFunc.fetch({
-  //       params: {
-  //         abi: chainlinkFeedAbi,
-  //         functionName: "latestRoundData",
-  //         contractAddress: token.aggregatorAddress,
-  //       },
-  //       onComplete: () => {
-  //         setIsCalculating(false);
-  //       },
-  //       onSuccess: (result: any) => {
-  //         const { answer } = result;
-  //         setPrice(answer.toString());
-  //         setAmount(
-  //           String(
-  //             _.ceil(
-  //               25 /
-  //                 new BigNumber(answer.toString())
-  //                   .dividedBy("100000000")
-  //                   .toNumber(),
-  //               2
-  //             )
-  //           )
-  //         );
-  //       },
-  //     });
-  //   }
-  //   // eslint-disable-next-line
-  // }, [isWeb3Enabled, token]);
 
   return (
     <Grid item lg={5} px={isLargeScreen ? 5 : 0} mt={2} mb={2}>
@@ -119,10 +60,20 @@ const BuyContainer: FC<props> = (props: props) => {
           pb: 3,
         }}
       >
-        <Typography fontWeight={600} sx={{ ml: 0.5, mb: 1 }}>
-          Price: 1 Alps = $0.000125
+        <Typography fontWeight={600} textAlign="center" sx={{ ml: 0.5 }}>
+          1 $ALPS = ${" "}
+          {Moralis.Units.FromWei(
+            (
+              presaleDataMapping.find((d) => d?.round === currentPresaleRound)
+                ?.usdPrice ?? 0
+            ).toString()
+          )}
         </Typography>
-        <Box component="form" autoComplete="off" onSubmit={submitHandler}>
+        <Box
+          component="form"
+          autoComplete="off"
+          // onSubmit={submitHandler}
+        >
           <Box
             sx={{
               display: "flex",
@@ -130,13 +81,16 @@ const BuyContainer: FC<props> = (props: props) => {
               height: "50px",
               backgroundColor: "#6E856E",
               borderRadius: "10px",
+              mt: 1,
+              mb: 1,
             }}
           >
             <TextField
               required
               variant="standard"
-              value={tokenAmount}
-              onChange={changeAmount}
+              name="tokenAmount"
+              value={paymentTokenInfo?.tokenAmount}
+              onChange={handleTokenAmountChange}
               disabled={isCalculating}
               InputProps={{
                 disableUnderline: true,
@@ -156,8 +110,9 @@ const BuyContainer: FC<props> = (props: props) => {
               <Select
                 labelId="demo-simple-select-standard-label"
                 id="demo-simple-select-standard"
-                value={tokenAddress}
-                onChange={changeToken}
+                name="tokenAddress"
+                value={paymentTokenInfo?.tokenAddress}
+                onChange={handleTokenAddressChange}
                 label="Age"
                 disableUnderline
                 sx={{
@@ -173,12 +128,7 @@ const BuyContainer: FC<props> = (props: props) => {
                   const { value, address, logo } = option;
                   return (
                     <MenuItem key={value} value={address}>
-                      <Grid
-                        container
-                        spacing={1}
-                        justifyContent="center"
-                        alignItems="center"
-                      >
+                      <Grid container spacing={1} alignItems="center">
                         <Grid item>
                           <img
                             src={logo}

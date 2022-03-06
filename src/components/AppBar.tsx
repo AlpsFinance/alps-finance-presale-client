@@ -202,7 +202,11 @@ const CustomAppBar: FC = () => {
           <Grid item>
             <Button
               onClick={toggleDrawer("right", true)}
-              sx={{ color: "white" }}
+              sx={{
+                color: isYOffsetMoreThan100
+                  ? theme.palette.secondary.light
+                  : "white",
+              }}
             >
               <Menu />
             </Button>

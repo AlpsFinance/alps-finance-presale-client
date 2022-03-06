@@ -55,7 +55,7 @@ export default function App() {
     <Box>
       <Box
         style={{
-          backgroundPositionY: isLargeScreen ? -40 : 0,
+          backgroundPositionY: isLargeScreen ? -40 : -150,
           backgroundImage: "url(background-pc.svg)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
@@ -114,7 +114,7 @@ export default function App() {
               </Grid>
             </Grid>
           </Grid>
-          <BuyContainer isLargeScreen={isLargeScreen} />
+          <BuyContainer />
           <Grid
             item
             lg={7}
@@ -132,7 +132,7 @@ export default function App() {
                 direction="row"
                 alignItems="center"
                 justifyContent="space-around"
-                spacing={1}
+                spacing={2}
               >
                 <Grid item>
                   <Typography sx={{ display: "inline" }}>Name: </Typography>
@@ -154,7 +154,13 @@ export default function App() {
                 </Grid>
               </Grid>
             )}
-            <Grid container direction="row" alignItems="center" spacing={1}>
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+              spacing={1}
+            >
               <Grid item lg={12}>
                 <Typography sx={{ display: "inline" }}>Contract: </Typography>
                 <Typography fontWeight={600} sx={{ display: "inline", mr: 1 }}>

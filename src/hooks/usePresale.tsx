@@ -1,5 +1,15 @@
+import { useContext } from "react";
+import { PresaleContext } from "../provider/PresaleContextProvider";
+
 const usePresale = () => {
-  return {};
+  const { currentPresaleRound, totalPresaleRound, presaleDataMapping } =
+    useContext(PresaleContext);
+
+  return {
+    currentPresaleRound,
+    totalPresaleRound,
+    presaleDataMapping,
+  };
 };
 
 export default usePresale;

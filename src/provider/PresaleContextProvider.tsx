@@ -62,6 +62,7 @@ const PresaleContextProvider: FC = (props) => {
     if (isInitialized) {
       getCurrentPresaleRound({
         onSuccess: () => {
+          let presaleMappingArray: PresaleDataStateWithRound[] = [];
           getTotalPresaleRound({
             onSuccess: (totalRound) => {
               for (
@@ -87,25 +88,23 @@ const PresaleContextProvider: FC = (props) => {
                       startingTime,
                       usdPrice,
                     } = (presaleDetails as unknown as PresaleDataState) ?? {};
-                    setPresaleDataMapping([
-                      ...presaleDataMapping,
-                      {
-                        round: parseInt(presaleRound as unknown as string),
-                        maximumPresaleAmount: parseInt(
-                          maximumPresaleAmount as unknown as string
-                        ),
-                        minimumUSDPurchase: parseInt(
-                          minimumUSDPurchase as unknown as string
-                        ),
-                        startingTime: parseInt(
-                          startingTime as unknown as string
-                        ),
-                        usdPrice: parseInt(usdPrice as unknown as string),
-                      },
-                    ]);
+                    presaleMappingArray.push({
+                      round: parseInt(presaleRound as unknown as string),
+                      maximumPresaleAmount: parseInt(
+                        maximumPresaleAmount as unknown as string
+                      ),
+                      minimumUSDPurchase: parseInt(
+                        minimumUSDPurchase as unknown as string
+                      ),
+                      startingTime: parseInt(startingTime as unknown as string),
+                      usdPrice: parseInt(usdPrice as unknown as string),
+                    });
                   },
                 });
               }
+            },
+            onComplete: () => {
+              setPresaleDataMapping(presaleMappingArray);
             },
           });
         },
@@ -120,14 +119,12 @@ const PresaleContextProvider: FC = (props) => {
     presaleChain,
   ]);
 
-  console.log(presaleDataMapping);
-
   return (
     <PresaleContext.Provider
       value={{
         currentPresaleRound: parseInt(currentPresaleRound as string),
         totalPresaleRound: parseInt(totalPresaleRound as string),
-        presaleDataMapping: [],
+        presaleDataMapping,
       }}
     >
       {children}
