@@ -92,26 +92,31 @@ export default function App() {
             </Grid>
             <AlpsTokenPresale />
             <Grid item sm={12} md={12}>
-              <Grid
-                container
-                px={3}
-                mt={2}
-                direction="column"
-                justifyContent="center"
-                textAlign="center"
-              >
-                <Box>
-                  <img
-                    src="placeholder.png"
-                    alt="Placeholder"
-                    loading="lazy"
+                <Box
+                  mt={2}
+                  sx={{
+                    position: "relative",
+                    paddingBottom: "56.25%" /* 16:9 */,
+                    overflow: "hidden"
+                  }}
+                >
+                  <iframe
                     style={{
+                      overflow: "hidden",
+                      border: 0,
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
                       width: "100%",
-                      maxWidth: "750px",
+                      height: "100%"
                     }}
-                  />
+                    src='https://www.youtube-nocookie.com/embed/3E-n5iQCSSI'
+                    title='YouTube video player'
+                    frameBorder='0'
+                    allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                    allowFullScreen
+                  ></iframe>
                 </Box>
-              </Grid>
             </Grid>
           </Grid>
           <BuyContainer />
