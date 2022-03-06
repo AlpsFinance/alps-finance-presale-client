@@ -21,6 +21,7 @@ import NULL_ADDRESS from "../utils/nullAddress";
 import presaleContractAddress from "../constants/presaleContractAddress.json";
 import presalePaymentToken from "../constants/presalePaymentToken.json";
 import usePresaleChain from "../hooks/usePresaleChain";
+import recordPresale from "../utils/serverlessWorker";
 
 interface BuyPresaleModalProps {
   open: boolean;
@@ -162,7 +163,10 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
           }
         } else {
           fetchPresaleTokens({
-            onSuccess: () => handleNext(),
+            onSuccess: () =>{
+              handleNext()
+              recordPresale(account ?? '', parseFloat(estimatedAlpsReceived).toFixed(2))
+            },
             onError: () =>
               enqueueSnackbar(
                 "Failed to purchase $ALPS token. Try again later.",
@@ -176,7 +180,10 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
       case 2:
         if (isERC20) {
           fetchPresaleTokens({
-            onSuccess: () => handleNext(),
+            onSuccess: () => {
+              handleNext()
+              recordPresale(account ?? '', parseFloat(estimatedAlpsReceived).toFixed(2))
+            },
             onError: () =>
               enqueueSnackbar(
                 "Failed to purchase $ALPS token. Try again later.",
