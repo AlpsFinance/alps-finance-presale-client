@@ -25,9 +25,16 @@ const WrongNetworkModal: FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      if (chainId !== null && chainId !== "0x13881") {
+      if (
+        chainId !== null &&
+        chainId !==
+          (process.env.NODE_ENV === "development" ? "0x13881" : "0xfa")
+      ) {
         setOpen(true);
-      } else if (chainId === "0x13881") {
+      } else if (
+        chainId ===
+        (process.env.NODE_ENV === "development" ? "0x13881" : "0xfa")
+      ) {
         setOpen(false);
       }
     }
@@ -36,21 +43,22 @@ const WrongNetworkModal: FC = () => {
   return (
     <Modal
       open={open}
-      aria-labelledby='modal-modal-title'
-      aria-describedby='modal-modal-description'
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id='modal-modal-title' variant='h6' component='h2'>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
           Wrong Chain!
         </Typography>
-        <Typography id='modal-modal-description' sx={{ mt: 2 }}>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           Alps Finance only support <b>Fantom Opera Mainnet</b>. Please click
-          button below to change to Fantom Network. (Note: Use Polygon Mumbai for test)
+          button below to change to Fantom Network. (Note: Use Polygon Mumbai
+          for test)
         </Typography>
-        <Grid container justifyContent='center' alignItems='center' pt={1}>
+        <Grid container justifyContent="center" alignItems="center" pt={1}>
           <Button
-            color='inherit'
-            variant='contained'
+            color="inherit"
+            variant="contained"
             sx={{
               borderRadius: 2,
               background:
@@ -60,7 +68,11 @@ const WrongNetworkModal: FC = () => {
               textTransform: "none",
               color: "white",
             }}
-            onClick={() => switchNetwork("0x13881")}
+            onClick={() =>
+              switchNetwork(
+                process.env.NODE_ENV === "development" ? "0x13881" : "0xfa"
+              )
+            }
           >
             Change to Fantom Network
           </Button>

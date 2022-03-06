@@ -17,7 +17,7 @@ const theme = createTheme({
     error: {
       main: red.A400,
     },
-  }
-})
+  },
+});
 
 export default theme;

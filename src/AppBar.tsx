@@ -21,7 +21,7 @@ const CustomAppBar: FC = () => {
       const ethAddress = user?.get("ethAddress");
       setWalletAddress(ethAddress.replace(ethAddress.substring(6, 38), "****"));
     }
-    //eslint - disable - next - line;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const loginControl = (event: React.MouseEvent) => {
@@ -67,7 +67,7 @@ const CustomAppBar: FC = () => {
   const list = (anchor: String) => (
     <Box
       sx={{ width: 250 }}
-      role='presentation'
+      role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
@@ -87,8 +87,8 @@ const CustomAppBar: FC = () => {
       </List>
       <List>
         <Button
-          color='inherit'
-          variant='contained'
+          color="inherit"
+          variant="contained"
           sx={{
             borderRadius: 30,
             color: "#0D7E06",
@@ -106,8 +106,8 @@ const CustomAppBar: FC = () => {
 
   return (
     <AppBar
-      position='sticky'
-      color='transparent'
+      position="sticky"
+      color="transparent"
       elevation={0}
       sx={{
         pt: 1.5,
@@ -143,8 +143,8 @@ const CustomAppBar: FC = () => {
             </Link>
           ))}
         <Button
-          color='inherit'
-          variant='contained'
+          color="inherit"
+          variant="contained"
           sx={{
             borderRadius: 30,
             color: "#0D7E06",
@@ -162,8 +162,8 @@ const CustomAppBar: FC = () => {
         </Button>
         <Grid
           container
-          justifyContent='right'
-          alignItems='right'
+          justifyContent="right"
+          alignItems="right"
           sx={{
             "@media (min-width: 780px)": {
               display: "none",

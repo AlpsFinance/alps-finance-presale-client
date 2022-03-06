@@ -14,40 +14,74 @@ import {
 } from "@mui/material";
 import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
 import { chainlinkFeedAbi } from "./utility/abi";
-import { preSaleAbi } from "./utility/presaleabi";
 import BigNumber from "bignumber.js";
+import { PRESALE_CONTRACT_ADDRESS } from "./constant";
+import { toPresaleContract, toTokenContract } from "./utility/helper";
+import { ClipLoader } from "react-spinners";
 
 interface props {
   isLargeScreen: Boolean;
 }
+
+type CurrencyData = {
+  value: string;
+  label: string;
+  address: string;
+  aggregatorAddress: string;
+};
+
 const BuyContainer: FC<props> = (props: props) => {
   const { isLargeScreen } = props;
-  const { isAuthenticated, enableWeb3, isWeb3Enabled, Moralis } = useMoralis();
-  const { fetch } = useWeb3ExecuteFunction();
+  const { enableWeb3, isWeb3Enabled, Moralis, user } = useMoralis();
+  const getPriceFunc = useWeb3ExecuteFunction();
 
-  const tokens = [
-    {
-      value: "0",
-      label: "MATIC",
-      contractAddress: "0x0000000000000000000000000000000000000000",
-      oracleAddress: "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada",
-    },
-    {
-      value: "1",
-      label: "USDT",
-      contractAddress: "0x72F09c85234C975Da2B6686e472FE40633fA2Cd9",
-      oracleAddress: "0x92C09849638959196E976289418e5973CC96d645",
-    },
-    {
-      value: "2",
-      label: "DAI",
-      contractAddress: "0x001B3B4d0F3714Ca98ba10F6042DaEbF0B1B7b6F",
-      oracleAddress: "0x0FCAa9c899EC5A91eBc3D5Dd869De833b06fB046",
-    },
-  ];
-  const [selectedToken, setToken] = useState(0);
-  const changeToken = (event: SelectChangeEvent<number>): void => {
-    setToken(Number(event.target.value));
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  console.log(process.env.NODE_ENV);
+  const chain_id = process.env.NODE_ENV === "development" ? "0x13881" : "0xfa";
+
+  const currencies: { [type: string]: CurrencyData[] } = {
+    "0xfa": [
+      {
+        value: "FTM",
+        label: "FTM",
+        address: "0x0000000000000000000000000000000000000000",
+        aggregatorAddress: "0xf4766552D15AE4d256Ad41B6cf2933482B0680dc",
+      },
+      {
+        value: "USDT",
+        label: "USDT",
+        address: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
+        aggregatorAddress: "0x91d5DEFAFfE2854C7D02F50c80FA1fdc8A721e52",
+      },
+      {
+        value: "DAI",
+        label: "DAI",
+        address: "0x049d68029688eAbF473097a2fC38ef61633A3C7A",
+        aggregatorAddress: "0xF64b636c5dFe1d3555A847341cDC449f612307d0",
+      },
+    ],
+    "0x13881": [
+      {
+        value: "MATIC",
+        label: "MATIC",
+        address: "0x0000000000000000000000000000000000000000",
+        aggregatorAddress: "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada",
+      },
+      {
+        value: "LINK",
+        label: "LINK",
+        address: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
+        aggregatorAddress: "0x12162c3E810393dEC01362aBf156D7ecf6159528",
+      },
+    ],
+  };
+  const [token, setToken] = useState<CurrencyData>(currencies[chain_id][0]);
+  const changeToken = (event: SelectChangeEvent<string>): void => {
+    setToken(
+      currencies[chain_id].filter(
+        (x: CurrencyData) => x.value === event.target.value
+      )[0]
+    );
   };
   const [amount, setAmount] = useState("0.1");
   const changeAmount = (
@@ -55,53 +89,67 @@ const BuyContainer: FC<props> = (props: props) => {
   ): void => {
     setAmount(event.target.value);
   };
-  const [isCalculating, setIsCalculating] = useState(false);
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>): void => {
+  const [price, setPrice] = useState("1");
+  const submitHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    fetch({
-      params: {
-        abi: preSaleAbi,
-        functionName: "presaleTokens",
-        contractAddress: "0x446D0E6f6d473ef5Ac7DF1bac47a1740c540a1B3",
-        params: {
-          _paymentTokenAddress: tokens[selectedToken].contractAddress,
-          _amount: new BigNumber(amount).multipliedBy("1000000000000000").toString(),
-        },
-        // msgValue: Moralis.Units.ETH(1),
-      },
-      onComplete: () => {
-        setIsCalculating(false);
-      },
-      onError: (result: any) => {
-        console.log(result);
-      },
-      onSuccess: (result: any) => {
-        alert(true);
-      },
-    });
+    console.log(price, amount);
+    if (!isWeb3Enabled) {
+      await enableWeb3();
+    }
+    setIsProcessing(true);
+    try {
+      const ethAddress = user?.get("ethAddress");
+      if (token.address === "0x0000000000000000000000000000000000000000") {
+        const res = await toPresaleContract()
+          .methods.presaleTokens(token.address, Moralis.Units.ETH(amount))
+          .send({
+            from: ethAddress,
+            value: Moralis.Units.ETH(amount),
+          });
+
+        console.log(res);
+      } else {
+        const tokenContract = toTokenContract(token.address);
+        const approve = await tokenContract.methods
+          .allowance(ethAddress, PRESALE_CONTRACT_ADDRESS)
+          .call();
+        console.log(approve < Moralis.Units.ETH(amount));
+        if (approve < Moralis.Units.ETH(amount)) {
+          await tokenContract.methods
+            .approve(PRESALE_CONTRACT_ADDRESS, Moralis.Units.ETH(amount))
+            .send({ from: ethAddress });
+        }
+        const res = await toPresaleContract()
+          .methods.presaleTokens(token.address, Moralis.Units.ETH(amount))
+          .send({ from: ethAddress });
+        console.log(res);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
+  const [isCalculating, setIsCalculating] = useState(false);
+
   useEffect(() => {
-    if (!isWeb3Enabled) {
-      enableWeb3();
-    }
     if (isWeb3Enabled) {
       setIsCalculating(true);
-      fetch({
+      console.log("getting");
+      getPriceFunc.fetch({
         params: {
           abi: chainlinkFeedAbi,
           functionName: "latestRoundData",
-          contractAddress: tokens[selectedToken].oracleAddress,
+          contractAddress: token.aggregatorAddress,
         },
         onComplete: () => {
           setIsCalculating(false);
         },
-        onError: (result: any) => {
-          console.log(result);
-        },
         onSuccess: (result: any) => {
           const { answer } = result;
+          setPrice(answer.toString());
           setAmount(
             String(
               _.ceil(
@@ -115,14 +163,15 @@ const BuyContainer: FC<props> = (props: props) => {
           );
         },
       });
-    } else if (!isCalculating) {
-      setIsCalculating(true);
+    } else {
+      enableWeb3();
     }
     // eslint-disable-next-line
-  }, [isAuthenticated, selectedToken]);
+  }, [isWeb3Enabled, token]);
+
   return (
     <Grid item lg={5} px={isLargeScreen ? 5 : 0} mt={2} mb={2}>
-      <Typography variant='h5' sx={{ mb: 2 }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
         Presale Round 1
       </Typography>
       <Box
@@ -139,7 +188,7 @@ const BuyContainer: FC<props> = (props: props) => {
         <Typography fontWeight={600} sx={{ ml: 0.5, mb: 1 }}>
           Price: 1 Alps = $0.000125
         </Typography>
-        <Box component='form' autoComplete='off' onSubmit={submitHandler}>
+        <Box component="form" autoComplete="off" onSubmit={submitHandler}>
           <Box
             sx={{
               display: "flex",
@@ -151,7 +200,7 @@ const BuyContainer: FC<props> = (props: props) => {
           >
             <TextField
               required
-              variant='standard'
+              variant="standard"
               value={amount}
               onChange={changeAmount}
               disabled={isCalculating}
@@ -168,14 +217,14 @@ const BuyContainer: FC<props> = (props: props) => {
                 },
               }}
             />
-            <Divider orientation='vertical' flexItem color='white' />
-            <FormControl variant='standard' sx={{ minWidth: 100 }}>
+            <Divider orientation="vertical" flexItem color="white" />
+            <FormControl variant="standard" sx={{ minWidth: 100 }}>
               <Select
-                labelId='demo-simple-select-standard-label'
-                id='demo-simple-select-standard'
-                value={selectedToken}
+                labelId="demo-simple-select-standard-label"
+                id="demo-simple-select-standard"
+                value={token.value}
                 onChange={changeToken}
-                label='Age'
+                label="Age"
                 disableUnderline
                 sx={{
                   pl: 2,
@@ -186,7 +235,7 @@ const BuyContainer: FC<props> = (props: props) => {
                   },
                 }}
               >
-                {tokens.map((option) => (
+                {currencies[chain_id].map((option: any) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
@@ -195,8 +244,9 @@ const BuyContainer: FC<props> = (props: props) => {
             </FormControl>
           </Box>
           <Button
-            color='inherit'
-            variant='contained'
+            color="inherit"
+            variant="contained"
+            disabled={isProcessing}
             sx={{
               borderRadius: 2,
               background:
@@ -207,9 +257,13 @@ const BuyContainer: FC<props> = (props: props) => {
               textTransform: "none",
               color: "black",
             }}
-            type='submit'
+            type="submit"
           >
-            Buy
+            {isProcessing ? (
+              <ClipLoader color={"#fff"} loading={isProcessing} size={30} />
+            ) : (
+              "Buy"
+            )}
           </Button>
         </Box>
       </Box>

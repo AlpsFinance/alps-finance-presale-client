@@ -8,7 +8,7 @@ import TelegramIcon from "@mui/icons-material/Telegram";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { SvgIconTypeMap } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { FaDiscord, FaMedium, FaInstagram } from "react-icons/fa";
+import { FaMedium, FaInstagram } from "react-icons/fa";
 import { IconType } from "react-icons";
 
 interface SocialMediaObject {
@@ -62,30 +62,30 @@ const SocialMediaArray: SocialMediaObject[] = [
 ];
 
 const Footer: FC = () => {
-
   return (
     <Grid
       container
       sx={{
         paddingTop: "3rem",
         paddingBottom: "3rem",
-        background: "linear-gradient(91.05deg, #0D7E06 -25.94%, #002400 98.77%)",
+        background:
+          "linear-gradient(91.05deg, #0D7E06 -25.94%, #002400 98.77%)",
         color: "white",
         p: 2,
       }}
-      justifyContent='center'
-      alignItems='center'
+      justifyContent="center"
+      alignItems="center"
     >
       <Grid
         container
-        justifyContent='center'
-        alignItems='center'
+        justifyContent="center"
+        alignItems="center"
         sx={{
-          pb: 1
+          pb: 1,
         }}
       >
         <Grid item>
-          <Grid container justifyContent='center' alignItems='center'>
+          <Grid container justifyContent="center" alignItems="center">
             {SocialMediaArray.map((socialMedia: SocialMediaObject) => {
               const { name, icon: Icon, color, link } = socialMedia;
               return (
@@ -109,7 +109,12 @@ const Footer: FC = () => {
             })}
           </Grid>
         </Grid>
-        <Grid container justifyContent='center' alignItems='center' sx={{mt: 1}}>
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="center"
+          sx={{ mt: 1 }}
+        >
           <Grid item>
             <Typography variant="body2">&copy; 2021 Alps Labs</Typography>
           </Grid>
