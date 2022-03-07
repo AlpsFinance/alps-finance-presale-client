@@ -2,6 +2,7 @@ import { createContext, FC, useEffect, useState } from "react";
 import { useApiContract, useMoralis } from "react-moralis";
 import { abi } from "@alpsfinance/core/build/contracts/Presale.json";
 import presaleContractAddress from "../constants/presaleContractAddress.json";
+import usePresaleChain from "../hooks/usePresaleChain";
 
 interface PresaleDataState {
   startingTime: number;
@@ -28,8 +29,7 @@ export const PresaleContext = createContext<PresaleDataType>({
 
 const PresaleContextProvider: FC = (props) => {
   const { children } = props;
-  const presaleChain =
-    process.env.NODE_ENV === "development" ? "0x13881" : "0xfa";
+  const { presaleChain } = usePresaleChain();
   const { isInitialized } = useMoralis();
   const [presaleDataMapping, setPresaleDataMapping] = useState<
     PresaleDataStateWithRound[]

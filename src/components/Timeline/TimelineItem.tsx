@@ -82,9 +82,7 @@ export const TimelineItem: FC<TimeLineData> = ({ round, title }) => {
         Amount:{" "}
         {formatNumber((presaleByRound?.maximumPresaleAmount ?? 0) / 1e18)}
       </Typography>
-      <Typography>
-        Unit: $ {Moralis.Units.FromWei(presaleByRound?.usdPrice ?? 0)}
-      </Typography>
+      <Typography>Unit: $ {(presaleByRound?.usdPrice ?? 0) / 1e18}</Typography>
       <LinearProgressWithLabel
         value={(progress / (presaleByRound?.maximumPresaleAmount ?? 1)) * 1e18}
       />

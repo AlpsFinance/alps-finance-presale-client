@@ -9,10 +9,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
 import Fade from "@mui/material/Fade";
+import usePresaleChain from "../hooks/usePresaleChain";
 
 const WrongNetworkModal: FC = () => {
   const { isAuthenticated } = useMoralis();
   const { switchNetwork, chainId } = useChain();
+  const { presaleChain } = usePresaleChain();
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const [open, setOpen] = useState<boolean>(false);
@@ -27,12 +29,9 @@ const WrongNetworkModal: FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && chainId) {
-      setOpen(
-        chainId !==
-          (process.env.NODE_ENV === "development" ? "0x13881" : "0xfa")
-      );
+      setOpen(chainId !== presaleChain);
     }
-  }, [isAuthenticated, chainId]);
+  }, [isAuthenticated, chainId, presaleChain]);
 
   return (
     <Dialog
@@ -68,9 +67,7 @@ const WrongNetworkModal: FC = () => {
             onClick={async () => {
               try {
                 setIsSwitchingNetwork(true);
-                await switchNetwork(
-                  process.env.NODE_ENV === "development" ? "0x13881" : "0xfa"
-                );
+                await switchNetwork(presaleChain);
                 setIsSwitchingNetwork(false);
               } catch (e) {
                 console.error(e);

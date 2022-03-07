@@ -141,15 +141,10 @@ const BuyContainer: FC = (props) => {
 
   const estimatedAlpsReceived = useMemo(
     () =>
-      isLoading
+      isLoading && !currentPresale?.usdPrice
         ? 0 // to avoid having not updated decimals and latestRoundData calculated together
-        : paymentTokenUSDValue /
-          parseFloat(
-            Moralis.Units.FromWei(
-              currentPresale?.usdPrice ?? "1000000000000000000"
-            )
-          ),
-    [Moralis.Units, currentPresale?.usdPrice, isLoading, paymentTokenUSDValue]
+        : paymentTokenUSDValue / ((currentPresale?.usdPrice ?? 1e18) / 1e18),
+    [currentPresale?.usdPrice, isLoading, paymentTokenUSDValue]
   );
 
   useEffect(() => {

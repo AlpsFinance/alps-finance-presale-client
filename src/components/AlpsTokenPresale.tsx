@@ -4,7 +4,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useMoralis } from "react-moralis";
 import usePresale from "../hooks/usePresale";
 import { calculateTimeLeft } from "../utils/calculateTimeLeft";
 
@@ -18,42 +17,37 @@ interface TimeType {
 const AlpsTokenPresale: FC = (props) => {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
-  const { isAuthenticated } = useMoralis();
   const { currentPresaleRound, totalPresaleRound, presaleDataMapping } =
     usePresale();
   const [timeLeft, setTimeLeft] = useState<TimeType>(
     calculateTimeLeft(Date.now())
   );
 
-  // useEffect(() => {
-  //   if (isAuthenticated)
-  //     if (currentPresaleRound < 2) {
-  //       getPresaleDetails();
-  //     } else {
-  //       setTimeLeft(calculateTimeLeft(Date.now()));
-  //     }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [currentPresaleRound, isAuthenticated]);
-
-  useEffect(() => {
-    // if (isAuthenticated) Fetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
-
   let timer: any;
   useEffect(() => {
     if (presaleDataMapping) {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       timer = setInterval(() => {
+        const currentPresale = presaleDataMapping.find((d) => {
+          return d.round === currentPresaleRound;
+        });
         const nextPresale = presaleDataMapping.find((d) => {
           return (
             d.round === Math.min(currentPresaleRound + 1, totalPresaleRound - 1)
           );
         });
-        if (nextPresale) {
-          const leftTime = calculateTimeLeft(
-            1000 * Number(nextPresale?.startingTime)
-          );
+        if (currentPresale && nextPresale) {
+          let leftTime;
+          if (Date.now() < currentPresale?.startingTime) {
+            leftTime = calculateTimeLeft(
+              1000 * Number(currentPresale?.startingTime)
+            );
+          } else {
+            leftTime = calculateTimeLeft(
+              1000 * Number(currentPresale?.startingTime)
+            );
+          }
+
           setTimeLeft(leftTime);
         } else {
           setTimeLeft({
