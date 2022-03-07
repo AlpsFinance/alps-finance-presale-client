@@ -44,7 +44,7 @@ const AlpsTokenPresale: FC = (props) => {
             );
           } else {
             leftTime = calculateTimeLeft(
-              1000 * Number(currentPresale?.startingTime)
+              1000 * Number(nextPresale?.startingTime)
             );
           }
 
@@ -81,9 +81,7 @@ const AlpsTokenPresale: FC = (props) => {
           }}
         >
           <Grid container justifyContent="center" alignItems="center" pt={1}>
-            TOKEN PRESALE ROUND{" "}
-            {Math.min(currentPresaleRound + 1, totalPresaleRound - 1) || 1}{" "}
-            STARTS IN:
+            TOKEN PRESALE ROUND {currentPresaleRound + 1} STARTS IN:
           </Grid>
 
           <Grid container spacing={isLargeScreen ? 2 : 0}>
