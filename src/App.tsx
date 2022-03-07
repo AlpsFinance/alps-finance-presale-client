@@ -173,7 +173,7 @@ export default function App() {
                 </Typography>
 
                 <CopyToClipboard
-                  text={"0x064c13231656A8c10CE6df9e8CC91E9D8CbCce31"}
+                  text={presaleContractAddress[presaleChain].token}
                   onCopy={() => setCopied(true)}
                 >
                   <Tooltip
