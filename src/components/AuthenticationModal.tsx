@@ -14,8 +14,7 @@ import DialogContent from "@mui/material/DialogContent";
 import CircularProgress from "@mui/material/CircularProgress";
 import WalletLinkConnector from "../connectors/WalletLinkConnector";
 import MetamaskLogo from "../assets/wallet/metamask.svg";
-import WalletConnectLogo from "../assets/wallet/walletconnect.svg";
-import CoinbaseLogo from "../assets/wallet/coinbase.png";
+import usePresaleChain from "../hooks/usePresaleChain";
 
 enum AuthenticationType {
   METAMASK = "metamask",
@@ -35,7 +34,8 @@ const AuthenticationModal: FC<AuthenticationModalProps> = (props) => {
   const { authenticate, logout, isAuthenticated, isAuthenticating } =
     useMoralis();
   const { enqueueSnackbar } = useSnackbar();
-  const [walletAuth, setWalletAuth] = useState<AuthenticationType>(
+  const { presaleChain } = usePresaleChain();
+  const [walletAuth] = useState<AuthenticationType>(
     AuthenticationType.METAMASK
   );
   // temporary weird solution to check when logging out
@@ -53,6 +53,7 @@ const AuthenticationModal: FC<AuthenticationModalProps> = (props) => {
         authenticate({
           provider: "walletconnect",
           signingMessage: "Alps Finance Authentication",
+          chainId: Number(presaleChain),
           onSuccess: async () => {
             await enqueueSnackbar("Successfully connected to wallet", {
               variant: "success",
@@ -194,11 +195,13 @@ const AuthenticationModal: FC<AuthenticationModalProps> = (props) => {
                     </Grid>
                   </LoadingButton>
                 </Grid>
-                <Grid item>
+                {/* Temporarily Disabled not working properly */}
+                {/* <Grid item>
                   <LoadingButton
-                    onClick={() =>
-                      onAuthentication(AuthenticationType.WALLETCONNECT)
-                    }
+                    onClick={() => {
+                      setWalletAuth(AuthenticationType.WALLETCONNECT);
+                      onAuthentication(AuthenticationType.WALLETCONNECT);
+                    }}
                     color="inherit"
                     variant="outlined"
                     loading={
@@ -262,7 +265,7 @@ const AuthenticationModal: FC<AuthenticationModalProps> = (props) => {
                       </Grid>
                     </Grid>
                   </LoadingButton>
-                </Grid>
+                </Grid> */}
               </>
             )}
           </Grid>

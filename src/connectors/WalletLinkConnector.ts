@@ -12,7 +12,7 @@ class WalletLinkConnector extends Moralis?.AbstractWeb3Connector {
   walletLink = new WalletLink({
     appName: "Alps Finance",
     appLogoUrl:
-      "https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0",
+      "https://raw.githubusercontent.com/AlpsFinance/alpsfinance-brand-resources/39f1ff831b116d5786faea843ae51fdab5914643/logo/Alps-Logo-Square-1.svg",
     darkMode: false,
   });
 
@@ -22,8 +22,16 @@ class WalletLinkConnector extends Moralis?.AbstractWeb3Connector {
    * It should also return the account and chainId, if possible
    */
   async activate() {
+    try {
+      await this.deactivate();
+    } catch (error) {
+      // Do nothing
+    }
+
     const ethereum = this.walletLink.makeWeb3Provider(
-      `https://speedy-nodes-nyc.moralis.io/${process.env.REACT_APP_MORALIS_SPEEDY_NODES_KEY}/eth/mainnet`,
+      process.env.NODE_ENV === "development"
+        ? "https://rpc-mumbai.matic.today"
+        : "https://rpc.ftm.tools/",
       1
     );
 
@@ -32,7 +40,7 @@ class WalletLinkConnector extends Moralis?.AbstractWeb3Connector {
     const web3 = new Web3(ethereum);
     const accounts = await web3.eth.getAccounts();
     this.account = accounts[0];
-    this.chainId = "0x1"; // Should be in hex format
+    this.chainId = process.env.NODE_ENV === "development" ? "0x13881" : "0xfa"; // Should be in hex format
     this.provider = ethereum;
 
     // Call the subscribeToEvents from AbstractWeb3Connector to handle events like accountsChange and chainChange

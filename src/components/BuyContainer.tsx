@@ -315,6 +315,13 @@ const BuyContainer: FC = (props) => {
                       variant: "warning",
                     }
                   );
+                } else if (
+                  currentPresale?.startingTime &&
+                  Date.now() < (currentPresale?.startingTime ?? Date.now())
+                ) {
+                  enqueueSnackbar(`The Presale has not started yet!`, {
+                    variant: "warning",
+                  });
                 } else {
                   setOpen(true);
                 }
