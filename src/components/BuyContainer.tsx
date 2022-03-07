@@ -4,7 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Grid from "@mui/material/Grid";
@@ -29,7 +29,8 @@ interface PaymentTokenData {
 const BuyContainer: FC = (props) => {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
-  const { Moralis, isInitialized } = useMoralis();
+  const { Moralis, isInitialized, isAuthenticated, isWeb3Enabled } =
+    useMoralis();
   const { enqueueSnackbar } = useSnackbar();
   const { presaleChain } = usePresaleChain();
   const { currentPresaleRound, presaleDataMapping } = usePresale();
@@ -101,6 +102,46 @@ const BuyContainer: FC = (props) => {
     }
   };
 
+  /**
+   * @name handleBuy
+   * @description Handle the purchase of $ALPS token
+   */
+  const handleBuy = () => {
+    if (!isInitialized || !isAuthenticated || !isWeb3Enabled) {
+      enqueueSnackbar("You have not connected your wallet!", {
+        variant: "warning",
+      });
+    }
+    // Check whether the minimum amount of purchase is fulfilled
+    else if (
+      currentPresale?.minimumUSDPurchase &&
+      paymentTokenUSDValue <
+        parseFloat(
+          Moralis.Units.FromWei(
+            (currentPresale?.minimumUSDPurchase ?? 0).toString()
+          )
+        )
+    ) {
+      enqueueSnackbar(
+        `Amount of purchase cannot be less than the minimum of $${Moralis.Units.FromWei(
+          (currentPresale?.minimumUSDPurchase ?? 0).toString()
+        )}!`,
+        {
+          variant: "warning",
+        }
+      );
+    } else if (
+      currentPresale?.startingTime &&
+      Date.now() < (currentPresale?.startingTime * 1000 ?? Date.now())
+    ) {
+      enqueueSnackbar(`The Presale has not started yet!`, {
+        variant: "warning",
+      });
+    } else {
+      setOpen(true);
+    }
+  };
+
   const isLoading = useMemo(
     () =>
       isDecimalsLoading ||
@@ -141,10 +182,16 @@ const BuyContainer: FC = (props) => {
 
   const estimatedAlpsReceived = useMemo(
     () =>
-      isLoading && !currentPresale?.usdPrice
+      isLoading || !currentPresale?.usdPrice
         ? 0 // to avoid having not updated decimals and latestRoundData calculated together
         : paymentTokenUSDValue / ((currentPresale?.usdPrice ?? 1e18) / 1e18),
     [currentPresale?.usdPrice, isLoading, paymentTokenUSDValue]
+  );
+
+  const isAllDataLoading = useMemo(
+    () =>
+      isLoading || estimatedAlpsReceived === 0 || paymentTokenUSDValue === 0,
+    [estimatedAlpsReceived, isLoading, paymentTokenUSDValue]
   );
 
   useEffect(() => {
@@ -277,9 +324,10 @@ const BuyContainer: FC = (props) => {
                 )}{" "}
               </i>
             </Typography>
-            <Button
+            <LoadingButton
               color="inherit"
               variant="contained"
+              disabled={isAllDataLoading}
               sx={{
                 borderRadius: 2,
                 background:
@@ -290,45 +338,10 @@ const BuyContainer: FC = (props) => {
                 textTransform: "none",
                 color: "white",
               }}
-              onClick={() => {
-                // Check whether the amount of token wanted to buy is 0 or not
-                if (estimatedAlpsReceived <= 0) {
-                  enqueueSnackbar("Input the amount should be larger than 0!", {
-                    variant: "warning",
-                  });
-                }
-                // Check whether the minimum amount of purchase is fulfilled
-                else if (
-                  currentPresale?.minimumUSDPurchase &&
-                  paymentTokenUSDValue <
-                    parseFloat(
-                      Moralis.Units.FromWei(
-                        (currentPresale?.minimumUSDPurchase ?? 0).toString()
-                      )
-                    )
-                ) {
-                  enqueueSnackbar(
-                    `Amount of purchase cannot be less than the minimum of $${Moralis.Units.FromWei(
-                      (currentPresale?.minimumUSDPurchase ?? 0).toString()
-                    )}!`,
-                    {
-                      variant: "warning",
-                    }
-                  );
-                } else if (
-                  currentPresale?.startingTime &&
-                  Date.now() < (currentPresale?.startingTime ?? Date.now())
-                ) {
-                  enqueueSnackbar(`The Presale has not started yet!`, {
-                    variant: "warning",
-                  });
-                } else {
-                  setOpen(true);
-                }
-              }}
+              onClick={handleBuy}
             >
               Buy
-            </Button>
+            </LoadingButton>
           </Box>
         </Box>
       </Grid>
