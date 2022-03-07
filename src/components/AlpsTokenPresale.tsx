@@ -81,7 +81,8 @@ const AlpsTokenPresale: FC = (props) => {
           }}
         >
           <Grid container justifyContent="center" alignItems="center" pt={1}>
-            TOKEN PRESALE ROUND {currentPresaleRound + 2} STARTS IN:
+            TOKEN PRESALE ROUND{" "}
+            {currentPresaleRound ? currentPresaleRound + 2 : 1} STARTS IN:
           </Grid>
 
           <Grid container spacing={isLargeScreen ? 2 : 0}>
