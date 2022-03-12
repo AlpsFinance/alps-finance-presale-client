@@ -6,7 +6,7 @@
  */
 const usePresaleChain = (): { presaleChain: "0xa869" | "0xa86a" } => {
   return {
-    presaleChain: process.env.NODE_ENV !== "development" ? "0xa869" : "0xa86a",
+    presaleChain: process.env.NODE_ENV === "development" ? "0xa869" : "0xa86a",
   };
 };
 
