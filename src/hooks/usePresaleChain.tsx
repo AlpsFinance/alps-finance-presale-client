@@ -2,11 +2,11 @@
  * @name usePresaleChain
  * @description Returns the chain to use depending on `NODE_ENV`
  *
- * @returns `0x13881` for development or `0xfa` for production
+ * @returns `0xa869` for development or `0xa86a` for production
  */
-const usePresaleChain = (): { presaleChain: "0x13881" | "0xfa" } => {
+const usePresaleChain = (): { presaleChain: "0xa869" | "0xa86a" } => {
   return {
-    presaleChain: process.env.NODE_ENV === "development" ? "0x13881" : "0xfa",
+    presaleChain: process.env.NODE_ENV === "development" ? "0xa869" : "0xa86a",
   };
 };
 

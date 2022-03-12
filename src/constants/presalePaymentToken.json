@@ -1,35 +1,35 @@
 {
-  "0xfa": [
+  "0xa86a": [
     {
-      "value": "FTM",
+      "value": "AVAX",
       "address": "0x0000000000000000000000000000000000000000",
-      "aggregatorAddress": "0xf4766552D15AE4d256Ad41B6cf2933482B0680dc",
-      "logo": "https://cryptologos.cc/logos/fantom-ftm-logo.svg?v=022"
+      "aggregatorAddress": "0x0A77230d17318075983913bC2145DB16C7366156",
+      "logo": "https://cryptologos.cc/logos/avalanche-avax-logo.png?v=022"
     },
     {
       "value": "USDT",
-      "address": "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
-      "aggregatorAddress": "0x91d5DEFAFfE2854C7D02F50c80FA1fdc8A721e52",
+      "address": "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
+      "aggregatorAddress": "0xEBE676ee90Fe1112671f19b6B7459bC678B67e8a",
       "logo": "https://s2.coinmarketcap.com/static/img/coins/200x200/825.png"
     },
     {
       "value": "DAI",
-      "address": "0x049d68029688eAbF473097a2fC38ef61633A3C7A",
-      "aggregatorAddress": "0xF64b636c5dFe1d3555A847341cDC449f612307d0",
+      "address": "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70",
+      "aggregatorAddress": "0x51D7180edA2260cc4F6e4EebB82FEF5c3c2B8300",
       "logo": "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png"
     }
   ],
-  "0x13881": [
+  "0xa869": [
     {
-      "value": "MATIC",
+      "value": "AVAX",
       "address": "0x0000000000000000000000000000000000000000",
-      "aggregatorAddress": "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada",
-      "logo": "https://lh3.googleusercontent.com/iCzYZqDqSbdsglDE1ZYVLMpnvP0kA6mkzKJ0wlBp-0YQ5pbqNnmfB6yu5GTafCR_Flo04kZY9g01cmdhjxBXRh4j2ktQ-0ASrS-y=w600"
+      "aggregatorAddress": "0x5498BB86BC934c8D34FDA08E81D444153d0D06aD",
+      "logo": "https://cryptologos.cc/logos/avalanche-avax-logo.png?v=022"
     },
     {
       "value": "LINK",
-      "address": "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
-      "aggregatorAddress": "0x12162c3E810393dEC01362aBf156D7ecf6159528",
+      "address": "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846",
+      "aggregatorAddress": "0x34C4c526902d88a3Aa98DB8a9b802603EB1E3470",
       "logo": "https://seeklogo.com/images/C/chainlink-link-logo-CDF7095A43-seeklogo.com.png"
     }
   ]

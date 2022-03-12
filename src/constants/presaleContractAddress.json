@@ -1,10 +1,18 @@
 {
-  "0xfa": {
+  "0fa": {
     "presale": "0xB26bFB82e37A07D267A3379158D72429da45125b",
     "token": "0x0E0aC4a2607bAAE6BCa1B5a6C55B7e3116586555"
   },
   "0x13881": {
-    "presale": "0x446D0E6f6d473ef5Ac7DF1bac47a1740c540a1B3",
-    "token": "0xaB87981c7ce36C3773aafacb6560d17BEEfE3Ac5"
+    "presale": "0x197d1EB9D19B1EaC7757bE40Bd32f4D6FdD194C8",
+    "token": "0x7834B5Fd57cAc54FB35ED8C9D4270599390d5F04"
+  },
+  "0xa86a": {
+    "presale": "0xa46Aed38f24F8D343F631525Cf8686CEaDb7bbCE",
+    "token": "0x330fF2eBEA396eA2E94b4a0E88425Bdf067C269a"
+  },
+  "0xa869": {
+    "presale": "0xDd98c8DFC8f476Cb2bd4718ECF56BF1478483c04",
+    "token": "0xBc151C7c70441B5eA2869dC650B90231aCAD94Fd"
   }
 }

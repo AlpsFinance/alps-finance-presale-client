@@ -40,7 +40,7 @@ class WalletLinkConnector extends Moralis?.AbstractWeb3Connector {
     const web3 = new Web3(ethereum);
     const accounts = await web3.eth.getAccounts();
     this.account = accounts[0];
-    this.chainId = process.env.NODE_ENV === "development" ? "0x13881" : "0xfa"; // Should be in hex format
+    this.chainId = process.env.NODE_ENV === "development" ? "0xa869" : "0xa86a"; // Should be in hex format
     this.provider = ethereum;
 
     // Call the subscribeToEvents from AbstractWeb3Connector to handle events like accountsChange and chainChange

@@ -22,8 +22,8 @@ const WrongNetworkModal: FC = () => {
   const chainName = useMemo(
     () =>
       process.env.NODE_ENV === "development"
-        ? "Polygon Mumbai"
-        : "Fantom Opera Mainnet",
+        ? "Avalanche Fuji"
+        : "Avalanche C-Chain",
     []
   );
 

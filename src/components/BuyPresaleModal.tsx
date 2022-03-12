@@ -163,9 +163,12 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
           }
         } else {
           fetchPresaleTokens({
-            onSuccess: () =>{
-              handleNext()
-              recordPresale(account ?? '', parseFloat(estimatedAlpsReceived).toFixed(2))
+            onSuccess: () => {
+              handleNext();
+              recordPresale(
+                account ?? "",
+                parseFloat(estimatedAlpsReceived).toFixed(2)
+              );
             },
             onError: () =>
               enqueueSnackbar(
@@ -181,8 +184,11 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
         if (isERC20) {
           fetchPresaleTokens({
             onSuccess: () => {
-              handleNext()
-              recordPresale(account ?? '', parseFloat(estimatedAlpsReceived).toFixed(2))
+              handleNext();
+              recordPresale(
+                account ?? "",
+                parseFloat(estimatedAlpsReceived).toFixed(2)
+              );
             },
             onError: () =>
               enqueueSnackbar(
@@ -205,8 +211,8 @@ const BuyPresaleModal: FC<BuyPresaleModalProps> = (props) => {
   const isAllowanceSufficient = useMemo(
     () =>
       allowance
-        ? parseInt((allowance as any).toString()) >=
-          parseInt(paymentTokenAmount)
+        ? parseFloat((allowance as any).toString()) >=
+          parseFloat(paymentTokenAmount)
         : false,
     [allowance, paymentTokenAmount]
   );
